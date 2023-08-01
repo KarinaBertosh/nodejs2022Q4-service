@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
-import { DB } from 'src/database/db.servise';
-import { TrackDto } from 'src/utils/dto';
+import { DB } from 'src/database/db.service';
 import { Track } from 'src/utils/types';
+import { TrackDto } from './dto/track.dto';
 
 @Injectable()
 export class TrackService {
@@ -16,8 +16,8 @@ export class TrackService {
     return this.db.track.findTrack(id);
   }
 
-  createTrack(dto: TrackDto) {
-    const track = this.db.track.createTrack({
+  create(dto: TrackDto) {
+    const track = this.db.track.create({
       id: randomUUID(),
       name: dto.name,
       artistId: dto.artistId,
@@ -28,12 +28,12 @@ export class TrackService {
     return track;
   }
 
-  updateTrack(track: Track, newData: Track) {
-    return this.db.track.updateTrack(track, newData);
+  update(track: Track, newData: Track) {
+    return this.db.track.update(track, newData);
   }
 
-  deleteTrack(track: Track) {
-    return this.db.track.deleteTrack(track);
+  delete(track: Track) {
+    return this.db.track.delete(track);
   }
 }
 // }

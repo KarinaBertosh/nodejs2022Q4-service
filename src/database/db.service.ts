@@ -10,10 +10,10 @@ export class DB {
   get user() {
     return {
       findAll: () => this.users,
-      findUser: this.findOne,
-      createUser: this.createUser,
-      updatePassword: this.updatePassword,
-      deleteUser: this.deleteUser,
+      findOne: this.findOne,
+      create: this.createUser,
+      update: this.updatePassword,
+      delete: this.deleteUser,
     };
   }
 
@@ -21,9 +21,9 @@ export class DB {
     return {
       findAll: () => this.tracks,
       findTrack: this.findTrack,
-      createTrack: this.createTrack,
-      updateTrack: this.updateTrack,
-      deleteTrack: this.deleteTrack,
+      create: this.createTrack,
+      update: this.updateTrack,
+      delete: this.deleteTrack,
     };
   }
 

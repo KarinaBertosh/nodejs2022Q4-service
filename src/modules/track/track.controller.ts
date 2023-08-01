@@ -31,14 +31,14 @@ export class TrackController {
   @Post()
   @HttpCode(201)
   create(@Body() trackDto: TrackDto) {
-    return this.trackService.createTrack(trackDto);
+    return this.trackService.create(trackDto);
   }
 
   @Put(':id')
   async update(@Param() { id }: UUID, @Body() trackDto: TrackDto) {
     const track = await this.trackService.findOne(id);
     if (track.id !== id) throw new TrackNotExist();
-    const updatedTrack = await this.trackService.updateTrack(track, trackDto);
+    const updatedTrack = await this.trackService.update(track, trackDto);
     return updatedTrack;
   }
 
@@ -47,7 +47,7 @@ export class TrackController {
   async delete(@Param() { id }: UUID) {
     const track = await this.trackService.findOne(id);
     if (!track) throw new TrackNotExist();
-    const deletedUser = await this.trackService.deleteTrack(track);
+    const deletedUser = await this.trackService.delete(track);
     return deletedUser;
   }
 }

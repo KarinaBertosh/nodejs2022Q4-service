@@ -38,7 +38,7 @@ export class UserController {
     if (!createUserDto.login || !createUserDto.password)
       throw new UserNotCreate();
 
-    return this.userService.createUser(createUserDto);
+    return this.userService.create(createUserDto);
   }
 
   @Put(':id')
@@ -50,10 +50,7 @@ export class UserController {
 
     if (user.password !== oldPassword) throw new PasswordNotCorrect();
 
-    const updatedUser = await this.userService.updatePassword(
-      user,
-      newPassword,
-    );
+    const updatedUser = await this.userService.update(user, newPassword);
 
     if (user.password !== oldPassword) return updatedUser;
   }
@@ -63,7 +60,7 @@ export class UserController {
   async delete(@Param() { id }: UUID) {
     const user = await this.userService.findOne(id);
     if (!user) throw new UserNotExist();
-    const deletedUser = await this.userService.deleteUser(user);
+    const deletedUser = await this.userService.delete(user);
     return deletedUser;
   }
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { DB } from 'src/database/db.servise';
-import { CreateUserDto } from 'src/utils/dto';
+import { DB } from 'src/database/db.service';
 import { User } from 'src/utils/types';
+import { CreateUserDto } from './dto/user.dto';
 
 @Injectable()
 export class UserService {
@@ -12,12 +12,12 @@ export class UserService {
   }
 
   findOne(id: string) {
-    return this.db.user.findUser(id);
+    return this.db.user.findOne(id);
   }
 
-  createUser(dto: CreateUserDto) {
+  create(dto: CreateUserDto) {
     const time = +new Date();
-    const user = this.db.user.createUser({
+    const user = this.db.user.create({
       login: dto.login,
       password: dto.password,
       version: 1,
@@ -28,11 +28,11 @@ export class UserService {
     return user;
   }
 
-  updatePassword(user: User, newPassword: string) {
-    return this.db.user.updatePassword(user, newPassword);
+  update(user: User, newPassword: string) {
+    return this.db.user.update(user, newPassword);
   }
 
-  deleteUser(user: User) {
-    return this.db.user.deleteUser(user);
+  delete(user: User) {
+    return this.db.user.delete(user);
   }
 }
