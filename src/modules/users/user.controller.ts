@@ -55,11 +55,11 @@ export class UserController {
   }
 
   @Delete(':id')
+  @HttpCode(204)
   async deleteUser(@Param() { id }: UUID) {
     const user = await this.userService.findOne(id);
-
+    if (!user) throw new UserNotExist();
     const deletedUser = await this.userService.deleteUser(user);
-
     return deletedUser;
   }
 }
