@@ -21,6 +21,7 @@ export class DB {
       findUser: this.findOne,
       createUser: this.createUser,
       updatePassword: this.updatePassword,
+      deleteUser: this.deleteUser,
     };
   }
 
@@ -47,5 +48,11 @@ export class DB {
     const index = this.users.indexOf(user);
     this.users[index].password = password;
     return this.users[index];
+  };
+
+  deleteUser = (user: User) => {
+    const index = this.users.indexOf(user);
+    this.users.splice(index, 1);
+    return this.users;
   };
 }

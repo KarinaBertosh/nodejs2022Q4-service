@@ -31,4 +31,8 @@ export class UserService {
   updatePassword(user: User, newPassword: string) {
     return this.db.user.updatePassword(user, newPassword);
   }
+
+  deleteUser(user: User) {
+    return this.db.user.deleteUser(user);
+  }
 }

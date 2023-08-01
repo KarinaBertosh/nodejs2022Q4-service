@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   // Delete,
   Get,
   HttpCode,
@@ -50,5 +51,14 @@ export class UserController {
     );
 
     return updatedUser;
+  }
+
+  @Delete(':id')
+  async deleteUser(@Param() { id }: UUID) {
+    const user = await this.userService.findOne(id);
+
+    const deletedUser = await this.userService.deleteUser(user);
+
+    return deletedUser;
   }
 }
