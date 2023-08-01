@@ -12,7 +12,7 @@ import { CreateUserDto } from 'src/utils/dto';
 import { UserService } from './user.service';
 import { UUID } from 'src/database/uuid.dto';
 import { UpdatePasswordDto, User } from 'src/utils/types';
-import { UserNotExist } from 'src/errors/user.errors';
+import { PasswordNotCorrect, UserNotExist } from 'src/errors/user.errors';
 
 @Controller('user')
 export class UserController {
@@ -27,14 +27,14 @@ export class UserController {
   async getUser(@Param() { id }: UUID): Promise<User | undefined> {
     const user = await this.userService.findOne(id);
     if (!user) throw new UserNotExist();
-    return Object.assign(this, user);
+    return user;
   }
 
   @Post()
   @HttpCode(201)
   createUser(@Body() createUserDto: CreateUserDto) {
     const user = this.userService.createUser(createUserDto);
-    return Object.assign(this, user);
+    return user;
   }
 
   @Put(':id')
@@ -44,12 +44,14 @@ export class UserController {
   ) {
     const user = await this.userService.findOne(id);
 
+    if (user.password !== oldPassword) throw new PasswordNotCorrect();
+
     const updatedUser = await this.userService.updatePassword(
       user,
       newPassword,
     );
 
-    return updatedUser;
+    if (user.password !== oldPassword) return updatedUser;
   }
 
   @Delete(':id')

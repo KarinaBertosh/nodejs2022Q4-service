@@ -1,3 +1,5 @@
+import { IsNotEmpty } from 'class-validator';
+
 export interface User {
   id?: string;
   login: string;
@@ -34,7 +36,9 @@ export interface Favorites {
   tracks: string[];
 }
 
-export interface UpdatePasswordDto {
+export class UpdatePasswordDto {
+  @IsNotEmpty()
   oldPassword: string;
+  @IsNotEmpty()
   newPassword: string;
 }

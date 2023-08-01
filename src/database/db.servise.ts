@@ -4,16 +4,7 @@ import { randomUUID } from 'crypto';
 
 @Injectable()
 export class DB {
-  private users: User[] = [
-    {
-      id: '66982abc-e280-4ee0-9bc9-2afdef35f1cc',
-      login: 'fffff',
-      password: 'fffff',
-      version: 4,
-      createdAt: 4,
-      updatedAt: 4,
-    },
-  ];
+  private users: User[] = [];
 
   get user() {
     return {
@@ -40,7 +31,7 @@ export class DB {
     };
 
     this.users.push(user);
-    return user;
+    return this.users;
   };
 
   updatePassword = (user: User, password: string) => {
