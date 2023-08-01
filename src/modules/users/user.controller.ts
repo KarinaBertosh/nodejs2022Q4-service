@@ -34,7 +34,7 @@ export class UserController {
   @HttpCode(201)
   createUser(@Body() createUserDto: CreateUserDto) {
     const user = this.userService.createUser(createUserDto);
-    return user;
+    return Object.assign(this, user);
   }
 
   @Put(':id')

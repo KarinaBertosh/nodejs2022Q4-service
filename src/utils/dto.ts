@@ -1,9 +1,14 @@
-export interface CreateUserDto {
+import { IsNotEmpty } from 'class-validator';
+
+export class CreateUserDto {
+  @IsNotEmpty()
   login: string;
+
+  @IsNotEmpty()
   password: string;
 }
 
-export interface UpdatePasswordDto {
+export class UpdatePasswordDto {
   oldPassword: string;
   newPassword: string;
 }
