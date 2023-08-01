@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { DB } from 'src/database/db';
+import { DB } from 'src/database/db.servise';
 import { CreateUserDto } from 'src/utils/dto';
+import { User } from 'src/utils/types';
 
 @Injectable()
 export class UserService {
@@ -25,5 +26,9 @@ export class UserService {
     });
 
     return user;
+  }
+
+  updatePassword(user: User, newPassword: string) {
+    return this.db.user.updatePassword(user, newPassword);
   }
 }

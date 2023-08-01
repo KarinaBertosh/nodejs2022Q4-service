@@ -33,3 +33,8 @@ export interface Favorites {
   albums: string[];
   tracks: string[];
 }
+
+export interface UpdatePasswordDto {
+  oldPassword: string;
+  newPassword: string;
+}

@@ -7,11 +7,13 @@ import {
   Param,
   // Param,
   Post,
+  Put,
   // Put,
 } from '@nestjs/common';
 import { CreateUserDto } from 'src/utils/dto';
 import { UserService } from './user.service';
 import { UUID } from 'src/database/uuid.dto';
+import { UpdatePasswordDto } from 'src/utils/types';
 
 @Controller('user')
 export class UserController {
@@ -33,5 +35,20 @@ export class UserController {
   createUser(@Body() createUserDto: CreateUserDto) {
     const user = this.userService.createUser(createUserDto);
     return user;
+  }
+
+  @Put(':id')
+  async updateUser(
+    @Param() { id }: UUID,
+    @Body() { oldPassword, newPassword }: UpdatePasswordDto,
+  ) {
+    const user = await this.userService.findOne(id);
+
+    const updatedUser = await this.userService.updatePassword(
+      user,
+      newPassword,
+    );
+
+    return updatedUser;
   }
 }

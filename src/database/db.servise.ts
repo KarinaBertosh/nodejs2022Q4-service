@@ -20,6 +20,7 @@ export class DB {
       findAll: () => this.users,
       findUser: this.findOne,
       createUser: this.createUser,
+      updatePassword: this.updatePassword,
     };
   }
 
@@ -40,5 +41,11 @@ export class DB {
 
     this.users.push(user);
     return user;
+  };
+
+  updatePassword = (user: User, password: string) => {
+    const index = this.users.indexOf(user);
+    this.users[index].password = password;
+    return this.users[index];
   };
 }
