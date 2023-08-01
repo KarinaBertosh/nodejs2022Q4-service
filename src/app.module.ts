@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
-import { UserModule } from './modules/users/user.module';
 import { ConfigModule } from '@nestjs/config';
 import { DbModule } from './database/db.module';
+import { TrackModule } from './modules/track/track.module';
+import { UserModule } from './modules/users/user.module';
 
 @Module({
-  imports: [ConfigModule.forRoot(), UserModule, DbModule],
+  imports: [ConfigModule.forRoot(), UserModule, TrackModule, DbModule],
 })
 export class AppModule {}

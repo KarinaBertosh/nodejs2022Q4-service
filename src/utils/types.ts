@@ -16,7 +16,7 @@ export interface Artist {
 }
 
 export interface Track {
-  id: string;
+  id?: string;
   name: string;
   artistId: string | null;
   albumId: string | null;

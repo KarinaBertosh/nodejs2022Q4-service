@@ -12,20 +12,23 @@ import { CreateUserDto } from 'src/utils/dto';
 import { UserService } from './user.service';
 import { UUID } from 'src/database/uuid.dto';
 import { UpdatePasswordDto, User } from 'src/utils/types';
-import { PasswordNotCorrect, UserNotExist } from 'src/errors/user.errors';
+import {
+  PasswordNotCorrect,
+  UserNotCreate,
+  UserNotExist,
+} from 'src/errors/errors';
 
 @Controller('user')
 export class UserController {
   constructor(private userService: UserService) {}
   @Get()
   getUsers() {
-    const users = this.userService.findAll();
-    return users;
+    return this.userService.findAll();
   }
 
   @Get(':id')
-  async getUser(@Param() { id }: UUID): Promise<User | undefined> {
-    const user = await this.userService.findOne(id);
+  getUser(@Param() { id }: UUID) {
+    const user = this.userService.findOne(id);
     if (!user) throw new UserNotExist();
     return user;
   }
@@ -33,8 +36,10 @@ export class UserController {
   @Post()
   @HttpCode(201)
   createUser(@Body() createUserDto: CreateUserDto) {
-    const user = this.userService.createUser(createUserDto);
-    return user;
+    if (!createUserDto.login || !createUserDto.password)
+      throw new UserNotCreate();
+
+    return this.userService.createUser(createUserDto);
   }
 
   @Put(':id')
