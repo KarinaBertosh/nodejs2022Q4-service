@@ -2,19 +2,17 @@ import {
   Body,
   Controller,
   Delete,
-  // Delete,
   Get,
   HttpCode,
   Param,
-  // Param,
   Post,
   Put,
-  // Put,
 } from '@nestjs/common';
 import { CreateUserDto } from 'src/utils/dto';
 import { UserService } from './user.service';
 import { UUID } from 'src/database/uuid.dto';
-import { UpdatePasswordDto } from 'src/utils/types';
+import { UpdatePasswordDto, User } from 'src/utils/types';
+import { UserNotExist } from 'src/errors/user.errors';
 
 @Controller('user')
 export class UserController {
@@ -26,9 +24,10 @@ export class UserController {
   }
 
   @Get(':id')
-  getUser(@Param() { id }: UUID) {
-    const user = this.userService.findOne(id);
-    return user;
+  async getUser(@Param() { id }: UUID): Promise<User | undefined> {
+    const user = await this.userService.findOne(id);
+    if (!user) throw new UserNotExist();
+    return Object.assign(this, user);
   }
 
   @Post()

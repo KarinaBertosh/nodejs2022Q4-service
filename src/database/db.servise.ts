@@ -6,7 +6,7 @@ import { randomUUID } from 'crypto';
 export class DB {
   private users: User[] = [
     {
-      id: 'ffff',
+      id: '66982abc-e280-4ee0-9bc9-2afdef35f1cc',
       login: 'fffff',
       password: 'fffff',
       version: 4,
@@ -26,8 +26,7 @@ export class DB {
   }
 
   findOne = async (id: string): Promise<User | undefined> => {
-    const user = this.users.find((user) => user.id === id);
-    return user;
+    return this.users.find((user) => user.id === id);
   };
 
   createUser = ({ login, password, version, createdAt, updatedAt }: User) => {
