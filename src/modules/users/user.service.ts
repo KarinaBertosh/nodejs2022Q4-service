@@ -5,19 +5,20 @@ import { CreateUserDto } from './dto/user.dto';
 
 @Injectable()
 export class UserService {
+  public type = 'users';
   constructor(private db: DB) {}
 
   findAll() {
-    return this.db.user.findAll();
+    return this.db.findAll(this.type);
   }
 
   findOne(id: string) {
-    return this.db.user.findOne(id);
+    return this.db.findOne(this.type, id);
   }
 
   create(dto: CreateUserDto) {
     const time = +new Date();
-    const user = this.db.user.create({
+    const user = this.db.create(this.type, {
       login: dto.login,
       password: dto.password,
       version: 1,
@@ -28,11 +29,11 @@ export class UserService {
     return user;
   }
 
-  update(user: User, newPassword: string) {
-    return this.db.user.update(user, newPassword);
+  update(user: any, newPassword: string) {
+    return this.db.update(this.type, user, newPassword);
   }
 
-  delete(user: User) {
-    return this.db.user.delete(user);
+  delete(user: any) {
+    return this.db.delete(this.type, user);
   }
 }

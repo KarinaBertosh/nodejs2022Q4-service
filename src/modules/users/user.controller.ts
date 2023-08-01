@@ -46,21 +46,20 @@ export class UserController {
     @Param() { id }: UUID,
     @Body() { oldPassword, newPassword }: UpdatePasswordDto,
   ) {
-    const user = await this.userService.findOne(id);
+    const user = this.userService.findOne(id);
 
-    if (user.password !== oldPassword) throw new PasswordNotCorrect();
+    if (user['password'] !== oldPassword) throw new PasswordNotCorrect();
 
     const updatedUser = await this.userService.update(user, newPassword);
 
-    if (user.password !== oldPassword) return updatedUser;
+    return updatedUser;
   }
 
   @Delete(':id')
   @HttpCode(204)
   async delete(@Param() { id }: UUID) {
-    const user = await this.userService.findOne(id);
+    const user = this.userService.findOne(id);
     if (!user) throw new UserNotExist();
-    const deletedUser = await this.userService.delete(user);
-    return deletedUser;
+    return this.userService.delete(user);
   }
 }

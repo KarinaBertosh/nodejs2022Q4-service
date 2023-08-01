@@ -4,89 +4,87 @@ import { randomUUID } from 'crypto';
 
 @Injectable()
 export class DB {
+  public type = {
+    users: 'users',
+    tracks: 'tracks',
+  };
+
   private users: User[] = [];
   private tracks: Track[] = [];
 
-  get user() {
-    return {
-      findAll: () => this.users,
-      findOne: this.findOne,
-      create: this.createUser,
-      update: this.updatePassword,
-      delete: this.deleteUser,
-    };
+  findAll(entity: string) {
+    switch (entity) {
+      case this.type.users:
+        return this.users;
+      case this.type.tracks:
+        return this.tracks;
+    }
   }
 
-  get track() {
-    return {
-      findAll: () => this.tracks,
-      findTrack: this.findTrack,
-      create: this.createTrack,
-      update: this.updateTrack,
-      delete: this.deleteTrack,
-    };
+  findOne(entity: string, id: string) {
+    switch (entity) {
+      case this.type.users:
+        return this.users.find((user) => user.id === id);
+      case this.type.tracks:
+        return this.tracks.find((t) => t.id === id);
+    }
   }
 
-  findOne = async (id: string): Promise<User | undefined> => {
-    return this.users.find((user) => user.id === id);
-  };
+  create(entity: string, data: any) {
+    switch (entity) {
+      case this.type.users:
+        const user = {
+          id: randomUUID(),
+          login: data.login,
+          password: data.password,
+          version: data.version,
+          createdAt: data.createdAt,
+          updatedAt: data.updatedAt,
+        };
 
-  findTrack = async (id: string): Promise<Track | undefined> => {
-    return this.tracks.find((t) => t.id === id);
-  };
+        this.users.push(user);
+        return user;
+      case this.type.tracks:
+        const track = {
+          id: randomUUID(),
+          name: data.name,
+          artistId: data.artistId,
+          albumId: data.albumId,
+          duration: data.duration,
+        };
 
-  createUser = ({ login, password, version, createdAt, updatedAt }: User) => {
-    const user = {
-      id: randomUUID(),
-      login,
-      password,
-      version,
-      createdAt,
-      updatedAt,
-    };
+        this.tracks.push(track);
+        return track;
+    }
+  }
 
-    this.users.push(user);
-    return user;
-  };
+  update(entity: string, data: any, newData: any) {
+    switch (entity) {
+      case this.type.users:
+        const indexUser = this.users.indexOf(data);
+        this.users[indexUser].password = newData;
+        return this.users[indexUser];
+      case this.type.tracks:
+        const { name, artistId, albumId, duration } = newData;
+        const indexTrack = this.tracks.indexOf(data);
+        this.tracks[indexTrack].name = name;
+        this.tracks[indexTrack].artistId = artistId;
+        this.tracks[indexTrack].albumId = albumId;
+        this.tracks[indexTrack].duration = duration;
+        return this.tracks[indexTrack];
+    }
+  }
 
-  createTrack = ({ name, artistId, albumId, duration }: Track) => {
-    const track = {
-      id: randomUUID(),
-      name,
-      artistId,
-      albumId,
-      duration,
-    };
-
-    this.tracks.push(track);
-    return track;
-  };
-
-  updatePassword = (user: User, password: string) => {
-    const index = this.users.indexOf(user);
-    this.users[index].password = password;
-    return this.users[index];
-  };
-
-  updateTrack = (track: Track, newData: Track) => {
-    const { name, artistId, albumId, duration } = newData;
-    const index = this.tracks.indexOf(track);
-    this.tracks[index].name = name;
-    this.tracks[index].artistId = artistId;
-    this.tracks[index].albumId = albumId;
-    this.tracks[index].duration = duration;
-    return this.tracks[index];
-  };
-
-  deleteUser = (user: User) => {
-    const index = this.users.indexOf(user);
-    this.users.splice(index, 1);
-    return this.users;
-  };
-
-  deleteTrack = (track: Track) => {
-    const index = this.tracks.indexOf(track);
-    this.tracks.splice(index, 1);
-    return this.tracks;
-  };
+  delete(entity: string, data: any) {
+    switch (entity) {
+      case this.type.users:
+        const index = this.users.indexOf(data);
+        this.users.splice(index, 1);
+        return this.users;
+      case this.type.tracks:
+        const indexTrack = this.tracks.indexOf(data);
+        this.tracks.splice(indexTrack, 1);
+        return this.tracks;
+    }
+  }
 }

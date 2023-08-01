@@ -6,18 +6,19 @@ import { TrackDto } from './dto/track.dto';
 
 @Injectable()
 export class TrackService {
+  public type = 'tracks';
   constructor(private db: DB) {}
 
   findAll() {
-    return this.db.track.findAll();
+    return this.db.findAll(this.type);
   }
 
   findOne(id: string) {
-    return this.db.track.findTrack(id);
+    return this.db.findOne(this.type, id);
   }
 
   create(dto: TrackDto) {
-    const track = this.db.track.create({
+    const track = this.db.create(this.type, {
       id: randomUUID(),
       name: dto.name,
       artistId: dto.artistId,
@@ -28,12 +29,11 @@ export class TrackService {
     return track;
   }
 
-  update(track: Track, newData: Track) {
-    return this.db.track.update(track, newData);
+  update(track: any, newData: Track) {
+    return this.db.update(this.type, track, newData);
   }
 
-  delete(track: Track) {
-    return this.db.track.delete(track);
+  delete(track: any) {
+    return this.db.delete(this.type, track);
   }
 }
-// }
