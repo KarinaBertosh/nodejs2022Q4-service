@@ -8,26 +8,25 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { CreateUserDto } from 'src/utils/dto';
 import { UserService } from './user.service';
 import { UUID } from 'src/database/uuid.dto';
-import { UpdatePasswordDto, User } from 'src/utils/types';
 import {
   PasswordNotCorrect,
   UserNotCreate,
   UserNotExist,
 } from 'src/errors/errors';
+import { CreateUserDto, UpdatePasswordDto } from './dto/user.dto';
 
 @Controller('user')
 export class UserController {
   constructor(private userService: UserService) {}
   @Get()
-  getUsers() {
+  getAll() {
     return this.userService.findAll();
   }
 
   @Get(':id')
-  getUser(@Param() { id }: UUID) {
+  getOne(@Param() { id }: UUID) {
     const user = this.userService.findOne(id);
     if (!user) throw new UserNotExist();
     return user;
@@ -35,7 +34,7 @@ export class UserController {
 
   @Post()
   @HttpCode(201)
-  createUser(@Body() createUserDto: CreateUserDto) {
+  create(@Body() createUserDto: CreateUserDto) {
     if (!createUserDto.login || !createUserDto.password)
       throw new UserNotCreate();
 
@@ -43,7 +42,7 @@ export class UserController {
   }
 
   @Put(':id')
-  async updateUser(
+  async update(
     @Param() { id }: UUID,
     @Body() { oldPassword, newPassword }: UpdatePasswordDto,
   ) {
@@ -61,7 +60,7 @@ export class UserController {
 
   @Delete(':id')
   @HttpCode(204)
-  async deleteUser(@Param() { id }: UUID) {
+  async delete(@Param() { id }: UUID) {
     const user = await this.userService.findOne(id);
     if (!user) throw new UserNotExist();
     const deletedUser = await this.userService.deleteUser(user);

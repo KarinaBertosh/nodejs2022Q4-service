@@ -10,7 +10,7 @@ export interface User {
 }
 
 export interface Artist {
-  id: string;
+  id?: string;
   name: string;
   grammy: boolean;
 }
@@ -24,7 +24,7 @@ export interface Track {
 }
 
 export interface Album {
-  id: string;
+  id?: string;
   name: string;
   year: number;
   artistId: string | null;
@@ -34,11 +34,4 @@ export interface Favorites {
   artists: string[];
   albums: string[];
   tracks: string[];
-}
-
-export class UpdatePasswordDto {
-  @IsNotEmpty()
-  oldPassword: string;
-  @IsNotEmpty()
-  newPassword: string;
 }

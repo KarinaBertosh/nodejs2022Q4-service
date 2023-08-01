@@ -10,19 +10,19 @@ import {
 } from '@nestjs/common';
 import { TrackService } from './track.service';
 import { UUID } from 'src/database/uuid.dto';
-import { TrackNotCreate, TrackNotExist } from 'src/errors/errors';
-import { TrackDto } from 'src/utils/dto';
+import { TrackNotExist } from 'src/errors/errors';
+import { TrackDto } from './dto/track.dto';
 
 @Controller('track')
 export class TrackController {
   constructor(private trackService: TrackService) {}
   @Get()
-  getTracks() {
+  getAll() {
     return this.trackService.findAll();
   }
 
   @Get(':id')
-  getTrack(@Param() { id }: UUID) {
+  getOne(@Param() { id }: UUID) {
     const track = this.trackService.findOne(id);
     if (!track) throw new TrackNotExist();
     return track;
@@ -30,12 +30,12 @@ export class TrackController {
 
   @Post()
   @HttpCode(201)
-  createUser(@Body() trackDto: TrackDto) {
+  create(@Body() trackDto: TrackDto) {
     return this.trackService.createTrack(trackDto);
   }
 
   @Put(':id')
-  async updateTrack(@Param() { id }: UUID, @Body() trackDto: TrackDto) {
+  async update(@Param() { id }: UUID, @Body() trackDto: TrackDto) {
     const track = await this.trackService.findOne(id);
     if (track.id !== id) throw new TrackNotExist();
     const updatedTrack = await this.trackService.updateTrack(track, trackDto);
@@ -44,7 +44,7 @@ export class TrackController {
 
   @Delete(':id')
   @HttpCode(204)
-  async deleteUser(@Param() { id }: UUID) {
+  async delete(@Param() { id }: UUID) {
     const track = await this.trackService.findOne(id);
     if (!track) throw new TrackNotExist();
     const deletedUser = await this.trackService.deleteTrack(track);
