@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Artist, Track, User } from 'src/utils/types';
+import { Album, Artist, Track, User } from 'src/utils/types';
 import { randomUUID } from 'crypto';
 
 @Injectable()
@@ -8,11 +8,13 @@ export class DB {
     users: 'users',
     tracks: 'tracks',
     artists: 'artists',
+    albums: 'albums',
   };
 
   private users: User[] = [];
   private tracks: Track[] = [];
   private artists: Artist[] = [];
+  private albums: Album[] = [];
 
   findAll(entity: string) {
     switch (entity) {
@@ -22,6 +24,8 @@ export class DB {
         return this.tracks;
       case this.type.artists:
         return this.artists;
+      case this.type.albums:
+        return this.albums;
     }
   }
 
@@ -33,6 +37,8 @@ export class DB {
         return this.tracks.find((t) => t.id === id);
       case this.type.artists:
         return this.artists.find((a) => a.id === id);
+      case this.type.albums:
+        return this.albums.find((a) => a.id === id);
     }
   }
 
@@ -69,6 +75,16 @@ export class DB {
         };
         this.artists.push(artist);
         return artist;
+
+      case this.type.albums:
+        const album = {
+          id: randomUUID(),
+          name: data.name,
+          year: data.year,
+          artistId: randomUUID(),
+        };
+        this.albums.push(album);
+        return album;
     }
   }
 
@@ -93,6 +109,13 @@ export class DB {
         this.artists[indexArtist].name = newData.name;
         this.artists[indexArtist].grammy = newData.grammy;
         return this.artists[indexArtist];
+
+      case this.type.albums:
+        const indexAlbum = this.albums.indexOf(data);
+        this.albums[indexAlbum].name = newData.name;
+        this.albums[indexAlbum].year = newData.year;
+        this.albums[indexAlbum].artistId = newData.artistId;
+        return this.artists[indexAlbum];
     }
   }
 
@@ -112,6 +135,11 @@ export class DB {
         const indexArtist = this.artists.indexOf(data);
         this.artists.splice(indexArtist, 1);
         return this.artists;
+
+      case this.type.albums:
+        const indexAlbum = this.albums.indexOf(data);
+        this.albums.splice(indexAlbum, 1);
+        return this.albums;
     }
   }
 }

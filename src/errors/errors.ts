@@ -18,6 +18,12 @@ export class ArtistNotExist extends HttpException {
   }
 }
 
+export class AlbumNotExist extends HttpException {
+  constructor() {
+    super('Album not exist', HttpStatus.NOT_FOUND);
+  }
+}
+
 export class UserNotCreate extends HttpException {
   constructor() {
     super('User not create', 400);
