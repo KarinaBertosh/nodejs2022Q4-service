@@ -11,7 +11,7 @@ import {
 import { AlbumService } from './album.service';
 import { UUID } from 'src/database/uuid.dto';
 import { AlbumNotExist } from 'src/errors/errors';
-import { AlbumDto } from './dto/artist.dto';
+import { AlbumDto } from './dto/album.dto';
 
 @Controller('album')
 export class AlbumController {
@@ -37,7 +37,7 @@ export class AlbumController {
   @Put(':id')
   async update(@Param() { id }: UUID, @Body() artistDto: AlbumDto) {
     const album = await this.albumService.findOne(id);
-    if (album.id !== id) throw new AlbumDto();
+    if (album.id !== id) throw new AlbumNotExist();
     const updatedAlbum = await this.albumService.update(album, artistDto);
     return updatedAlbum;
   }

@@ -24,6 +24,18 @@ export class AlbumNotExist extends HttpException {
   }
 }
 
+export class FavNotExist extends HttpException {
+  constructor() {
+    super('Favorites not exist', HttpStatus.NOT_FOUND);
+  }
+}
+
+export class NotFound extends HttpException {
+  constructor() {
+    super('This id not found', 422);
+  }
+}
+
 export class UserNotCreate extends HttpException {
   constructor() {
     super('User not create', 400);

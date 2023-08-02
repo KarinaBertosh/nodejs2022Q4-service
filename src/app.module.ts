@@ -5,6 +5,7 @@ import { TrackModule } from './modules/track/track.module';
 import { UserModule } from './modules/users/user.module';
 import { ArtistModule } from './modules/artist/artist.module';
 import { AlbumModule } from './modules/album/album.module';
+import { FavModule } from './modules/favorites/favorite.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { AlbumModule } from './modules/album/album.module';
     TrackModule,
     ArtistModule,
     AlbumModule,
+    FavModule,
     DbModule,
   ],
 })

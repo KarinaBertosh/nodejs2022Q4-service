@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Album, Artist, Track, User } from 'src/utils/types';
+import { Album, Artist, Favorites, Track, User } from 'src/utils/types';
 import { randomUUID } from 'crypto';
 
 @Injectable()
@@ -9,12 +9,18 @@ export class DB {
     tracks: 'tracks',
     artists: 'artists',
     albums: 'albums',
+    favorites: 'favs',
   };
 
   private users: User[] = [];
   private tracks: Track[] = [];
   private artists: Artist[] = [];
   private albums: Album[] = [];
+  private favorites: Favorites = {
+    artists: [],
+    albums: [],
+    tracks: [],
+  };
 
   findAll(entity: string) {
     switch (entity) {
@@ -26,6 +32,8 @@ export class DB {
         return this.artists;
       case this.type.albums:
         return this.albums;
+      case this.type.favorites:
+        return this.favorites;
     }
   }
 
@@ -42,7 +50,7 @@ export class DB {
     }
   }
 
-  create(entity: string, data: any) {
+  create(entity: string, data: any, typeFav?: string) {
     switch (entity) {
       case this.type.users:
         const user = {
@@ -85,6 +93,16 @@ export class DB {
         };
         this.albums.push(album);
         return album;
+
+      case this.type.favorites:
+        switch (typeFav) {
+          case 'tracks':
+            this.favorites.tracks.push(data);
+          case 'albums':
+            this.favorites.albums.push(data);
+          case 'artists':
+            this.favorites.artists.push(data);
+        }
     }
   }
 
@@ -119,7 +137,7 @@ export class DB {
     }
   }
 
-  delete(entity: string, data: any) {
+  delete(entity: string, data: any, type?: string) {
     switch (entity) {
       case this.type.users:
         const index = this.users.indexOf(data);
@@ -140,6 +158,11 @@ export class DB {
         const indexAlbum = this.albums.indexOf(data);
         this.albums.splice(indexAlbum, 1);
         return this.albums;
+
+      case this.type.favorites:
+        const indexFav = this.albums.indexOf(data);
+        this.favorites.tracks.splice(indexFav, 1);
+        return this.favorites;
     }
   }
 }

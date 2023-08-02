@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DB } from 'src/database/db.service';
-import { AlbumDto } from './dto/artist.dto';
+import { AlbumDto } from './dto/album.dto';
 import { randomUUID } from 'crypto';
 import { Album } from 'src/utils/types';
 

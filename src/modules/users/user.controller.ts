@@ -47,11 +47,8 @@ export class UserController {
     @Body() { oldPassword, newPassword }: UpdatePasswordDto,
   ) {
     const user = this.userService.findOne(id);
-
     if (user['password'] !== oldPassword) throw new PasswordNotCorrect();
-
     const updatedUser = await this.userService.update(user, newPassword);
-
     return updatedUser;
   }
 
