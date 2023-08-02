@@ -16,6 +16,7 @@ import {
   UserNotExist,
 } from 'src/errors/errors';
 import { CreateUserDto, UpdatePasswordDto } from './dto/user.dto';
+import { User } from 'src/utils/types';
 
 @Controller('user')
 export class UserController {
@@ -47,7 +48,8 @@ export class UserController {
     @Body() { oldPassword, newPassword }: UpdatePasswordDto,
   ) {
     const user = this.userService.findOne(id);
-    if (user['password'] !== oldPassword) throw new PasswordNotCorrect();
+    if (!user) throw new UserNotExist();
+    if (oldPassword !== user['password']) throw new PasswordNotCorrect();
     const updatedUser = await this.userService.update(user, newPassword);
     return updatedUser;
   }
