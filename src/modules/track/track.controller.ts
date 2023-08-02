@@ -10,12 +10,23 @@ import {
 } from '@nestjs/common';
 import { TrackService } from './track.service';
 import { UUID } from 'src/database/uuid.dto';
-import { TrackNotExist } from 'src/errors/errors';
+import {
+  AlbumNotExist,
+  ArtistNotExist,
+  NotFound,
+  TrackNotExist,
+} from 'src/errors/errors';
 import { TrackDto } from './dto/track.dto';
+import { ArtistService } from '../artist/artist.service';
+import { AlbumService } from '../album/album.service';
 
 @Controller('track')
 export class TrackController {
-  constructor(private trackService: TrackService) {}
+  constructor(
+    private trackService: TrackService,
+    private artistService: ArtistService,
+    private albumService: AlbumService,
+  ) {}
   @Get()
   getAll() {
     return this.trackService.findAll();
@@ -31,6 +42,10 @@ export class TrackController {
   @Post()
   @HttpCode(201)
   create(@Body() trackDto: TrackDto) {
+    const artist = this.artistService.findOne(trackDto.artistId);
+    const album = this.albumService.findOne(trackDto.albumId);
+    if (!artist) throw new ArtistNotExist();
+    if (!album) throw new AlbumNotExist();
     return this.trackService.create(trackDto);
   }
 

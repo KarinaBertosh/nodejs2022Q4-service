@@ -1,13 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { DB } from 'src/database/db.service';
 import { AlbumDto } from './dto/album.dto';
 import { randomUUID } from 'crypto';
 import { Album } from 'src/utils/types';
+import { DB } from 'src/database/db.service';
+import { ArtistService } from '../artist/artist.service';
+import { ArtistNotExist } from 'src/errors/errors';
 
 @Injectable()
 export class AlbumService {
   public type = 'albums';
-  constructor(private db: DB) {}
+  constructor(private db: DB, private artistService: ArtistService) {}
 
   findAll() {
     return this.db.findAll(this.type);
@@ -25,6 +27,8 @@ export class AlbumService {
       artistId: dto.artistId,
     });
 
+    const artist = this.artistService.findOne(dto.artistId);
+    if (!artist) throw new ArtistNotExist();
     return album;
   }
 
