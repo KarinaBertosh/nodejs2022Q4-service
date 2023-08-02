@@ -54,6 +54,8 @@ export class FavController {
   @HttpCode(204)
   async deleteAlbum(@Param() { id }: UUID) {
     const album = this.albumService.findOne(id);
+    const artist = this.artistService.findArtist(album);
+    this.artistService.makeNull(artist);
     if (!album) throw new AlbumNotExist();
     return this.favService.delete(album, 'albums');
   }
@@ -71,6 +73,10 @@ export class FavController {
   @HttpCode(204)
   async deleteArtist(@Param() { id }: UUID) {
     const artist = this.artistService.findOne(id);
+    const album = this.albumService.findAlbum(artist);
+    const track = this.trackService.findTrack(artist);
+    this.albumService.makeNull(album);
+    this.trackService.makeNull(track);
     if (!artist) throw new ArtistNotExist();
     return this.favService.delete(artist, 'artists');
   }

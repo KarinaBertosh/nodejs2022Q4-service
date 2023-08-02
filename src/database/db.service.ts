@@ -165,4 +165,16 @@ export class DB {
         return this.favorites;
     }
   }
+
+  makeNull(entity: string, data: any) {
+    switch (entity) {
+      case this.type.albums:
+        const indexAlbum = this.albums.indexOf(data);
+        this.albums[indexAlbum].artistId = null;
+      case this.type.tracks:
+        const indexTrack = this.tracks.indexOf(data);
+        this.tracks[indexTrack].artistId = null;
+        this.tracks[indexTrack].albumId = null;
+    }
+  }
 }

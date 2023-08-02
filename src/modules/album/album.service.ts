@@ -19,6 +19,10 @@ export class AlbumService {
     return this.db.findOne(this.type, id);
   }
 
+  findAlbum(entity: any) {
+    return this.db.findOne(this.type, entity.albumId);
+  }
+
   create(dto: AlbumDto) {
     const album = this.db.create(this.type, {
       id: randomUUID(),
@@ -38,5 +42,9 @@ export class AlbumService {
 
   delete(album: any) {
     return this.db.delete(this.type, album);
+  }
+
+  makeNull(album: any) {
+    return this.db.makeNull(this.type, album);
   }
 }

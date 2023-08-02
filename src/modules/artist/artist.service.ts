@@ -17,6 +17,10 @@ export class ArtistService {
     return this.db.findOne(this.type, id);
   }
 
+  findArtist(entity: any) {
+    return this.db.findOne(this.type, entity.artistId);
+  }
+
   create(dto: ArtistDto) {
     const artist = this.db.create(this.type, {
       id: randomUUID(),
@@ -33,5 +37,9 @@ export class ArtistService {
 
   delete(artist: any) {
     return this.db.delete(this.type, artist);
+  }
+
+  makeNull(artist: any) {
+    return this.db.makeNull(this.type, artist);
   }
 }

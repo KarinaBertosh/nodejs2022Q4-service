@@ -17,6 +17,10 @@ export class TrackService {
     return this.db.findOne(this.type, id);
   }
 
+  findTrack(entity: any) {
+    return this.db.findOne(this.type, entity.artistId);
+  }
+
   create(dto: TrackDto) {
     const track = this.db.create(this.type, {
       id: randomUUID(),
@@ -35,5 +39,9 @@ export class TrackService {
 
   delete(track: any) {
     return this.db.delete(this.type, track);
+  }
+
+  makeNull(track: any) {
+    return this.db.makeNull(this.type, track);
   }
 }
