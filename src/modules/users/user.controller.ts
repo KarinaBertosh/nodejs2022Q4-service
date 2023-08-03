@@ -34,23 +34,19 @@ export class UserController {
   }
 
   @Post()
-  @HttpCode(201)
   create(@Body() createUserDto: CreateUserDto) {
-    if (!createUserDto.login || !createUserDto.password)
-      throw new UserNotCreate();
-
     return this.userService.create(createUserDto);
   }
 
   @Put(':id')
   async update(
     @Param() { id }: UUID,
-    @Body() { oldPassword, newPassword }: UpdatePasswordDto,
+    @Body() { newPassword }: UpdatePasswordDto,
   ) {
     const user = this.userService.findOne(id);
     if (!user) throw new UserNotExist();
-    if (oldPassword !== user['password']) throw new PasswordNotCorrect();
-    const updatedUser = await this.userService.update(user, newPassword);
+    user.password = newPassword;
+    const updatedUser = await this.userService.update(user);
     return updatedUser;
   }
 
