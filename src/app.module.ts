@@ -3,16 +3,14 @@ import { ConfigModule } from '@nestjs/config';
 import { DbModule } from './database/db.module';
 import { UserModule } from './modules/users/user.module';
 import { TrackModule } from './modules/tracks/track.module';
-// import { ArtistModule } from './modules/artist/artist.module';
-// import { AlbumModule } from './modules/album/album.module';
-// import { FavModule } from './modules/favorites/favorite.module';
+import { ArtistModule } from './modules/artist/artist.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     UserModule,
     TrackModule,
-    // ArtistModule,
+    ArtistModule,
     // AlbumModule,
     // FavModule,
     DbModule,
