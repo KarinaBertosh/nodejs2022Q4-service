@@ -4,6 +4,7 @@ import { randomUUID } from 'crypto';
 import { CreateUserDto } from 'src/modules/users/dto/user.dto';
 import { TrackDto } from 'src/modules/tracks/dto/track.dto';
 import { ArtistDto } from 'src/modules/artist/dto/artist.dto';
+import { AlbumDto } from 'src/modules/album/dto/album.dto';
 
 const users = new Map<string, User>();
 const artists = new Map<string, Artist>();
@@ -48,6 +49,16 @@ export class DB {
       create: this.createArtist,
       update: this.updateArtist,
       delete: this.deleteArtist,
+    };
+  }
+
+  get album() {
+    return {
+      findAll: this.findAllAlbum,
+      findOne: this.findAlbum,
+      create: this.createAlbum,
+      update: this.updateAlbum,
+      delete: this.deleteAlbum,
     };
   }
 
@@ -138,5 +149,34 @@ export class DB {
 
   deleteArtist(artist: Artist) {
     artists.delete(artist.id);
+  }
+
+  //album
+  findAllAlbum() {
+    return [...albums.values()];
+  }
+
+  findAlbum(id: string) {
+    return albums.get(id);
+  }
+
+  createAlbum(dto: AlbumDto) {
+    const album = {
+      id: randomUUID(),
+      name: dto.name,
+      year: dto.year,
+      artistId: dto.artistId ?? null,
+    };
+    albums.set(album.id, album);
+    return album;
+  }
+
+  updateAlbum(album: Album) {
+    albums.delete(album.id);
+    albums.set(album.id, album);
+  }
+
+  deleteAlbum(album: Album) {
+    albums.delete(album.id);
   }
 }

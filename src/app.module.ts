@@ -4,6 +4,7 @@ import { DbModule } from './database/db.module';
 import { UserModule } from './modules/users/user.module';
 import { TrackModule } from './modules/tracks/track.module';
 import { ArtistModule } from './modules/artist/artist.module';
+import { AlbumModule } from './modules/album/album.module';
 
 @Module({
   imports: [
@@ -11,7 +12,7 @@ import { ArtistModule } from './modules/artist/artist.module';
     UserModule,
     TrackModule,
     ArtistModule,
-    // AlbumModule,
+    AlbumModule,
     // FavModule,
     DbModule,
   ],
