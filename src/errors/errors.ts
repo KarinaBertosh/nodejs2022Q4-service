@@ -18,6 +18,12 @@ export class ArtistNotExist extends HttpException {
   }
 }
 
+export class BadRequest extends HttpException {
+  constructor() {
+    super('id is invalid (not uuid)', HttpStatus.BAD_REQUEST);
+  }
+}
+
 export class AlbumNotExist extends HttpException {
   constructor() {
     super('Album not exist', HttpStatus.NOT_FOUND);

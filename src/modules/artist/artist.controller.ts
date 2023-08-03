@@ -1,17 +1,20 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
   Get,
   HttpCode,
   Param,
+  ParseUUIDPipe,
   Post,
   Put,
 } from '@nestjs/common';
 import { ArtistService } from './artist.service';
 import { UUID } from 'src/database/uuid.dto';
-import { ArtistNotExist } from 'src/errors/errors';
-import { ArtistDto } from './dto/artist.dto';
+import { ArtistNotExist, BadRequest } from 'src/errors/errors';
+import { ArtistDto, UpdateArtistDto } from './dto/artist.dto';
+import { validate } from 'uuid';
 
 @Controller('artist')
 export class ArtistController {
@@ -24,7 +27,7 @@ export class ArtistController {
   @Get(':id')
   getOne(@Param() { id }: UUID) {
     const artist = this.artistService.findOne(id);
-    if (!artist) throw new ArtistNotExist();
+    if (!artist || artist.id !== id) throw new ArtistNotExist();
     return artist;
   }
 
@@ -36,8 +39,11 @@ export class ArtistController {
 
   @Put(':id')
   async update(@Param() { id }: UUID, @Body() artistDto: ArtistDto) {
+    if (!artistDto) {
+      throw new BadRequest();
+    }
     const artist = await this.artistService.findOne(id);
-    if (artist.id !== id) throw new ArtistNotExist();
+    if (!artist || artist.id !== id) throw new ArtistNotExist();
     const updatedArtist = await this.artistService.update(artist, artistDto);
     return updatedArtist;
   }
