@@ -122,15 +122,13 @@ export class DB {
       albumId: dto.albumId ?? null,
       duration: dto.duration,
     };
-    console.log(15, track);
-
     tracks.set(track.id, track);
     return track;
   }
 
-  deleteTrack(track: Track) {
-    this.fav.delete(track.id, types.tracks);
-    tracks.delete(`${track.id}`);
+  async deleteTrack(track: Track): Promise<void> {
+    tracks.delete(track.id);
+    // this.fav.delete(track.id, types.tracks);
   }
 
   updateTrack(track: Track) {

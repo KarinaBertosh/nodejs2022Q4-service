@@ -52,11 +52,10 @@ export class TrackController {
     return updatedTrack;
   }
 
-  @Delete(':id')
   @HttpCode(204)
-  async delete(@Param() { id }: UUID) {
+  @Delete(':id')
+  delete(@Param('id', ParseUUIDPipe) id: string) {
     const track = this.trackService.findOne(id);
-    if (!track) throw new TrackNotExist();
     return this.trackService.delete(track);
   }
 }

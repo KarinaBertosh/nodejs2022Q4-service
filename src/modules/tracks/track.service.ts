@@ -28,7 +28,7 @@ export class TrackService {
     return this.db.track.update(track);
   }
 
-  delete(track: any) {
-    return this.db.track.delete(track);
+  async delete(track: any) {
+    return await this.db.track.delete(track);
   }
 }
