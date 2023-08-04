@@ -62,6 +62,14 @@ export class DB {
     };
   }
 
+  get fav() {
+    return {
+      findAll: this.findAllFav,
+      save: this.saveFav,
+      delete: this.deleteFav,
+    };
+  }
+
   //user
   findAllUser() {
     return [...users.values()];
@@ -178,5 +186,34 @@ export class DB {
 
   deleteAlbum(album: Album) {
     albums.delete(album.id);
+  }
+
+  //Fav
+
+  findAllFav() {
+    return favorites;
+  }
+
+  saveFav(id: string, type: string) {
+    let value = null;
+    switch (type) {
+      case 'artist':
+        value = artists.get(id);
+        break;
+      case 'album':
+        value = albums.get(id);
+        break;
+
+      case 'track':
+        value = tracks.get(id);
+        break;
+    }
+    if (!value) throw new Error('422');
+    favorites[type].push(id);
+    return value;
+  }
+
+  deleteFav(id: string, type: string) {
+    favorites[type] = favorites[type].filter((v) => v != id);
   }
 }
