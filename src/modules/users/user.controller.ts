@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UUID } from 'src/database/uuid.dto';
-import { CreateUserDto, UpdatePasswordDto } from './dto/user.dto';
+import { UserDto, UpdatePasswordDto } from './dto/user.dto';
 
 @Controller('user')
 export class UserController {
@@ -30,7 +30,7 @@ export class UserController {
   }
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
+  create(@Body() createUserDto: UserDto) {
     return this.userService.create(createUserDto);
   }
 

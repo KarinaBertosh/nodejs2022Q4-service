@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DB } from 'src/database/db.service';
-import { CreateUserDto } from './dto/user.dto';
+import { UserDto } from './dto/user.dto';
 import { User } from 'src/utils/types';
 import { EntityNotExist, PasswordNotRight } from 'src/errors/errors';
 import { entities } from 'src/utils/entity';
@@ -19,7 +19,7 @@ export class UserService {
     return user;
   }
 
-  create(dto: CreateUserDto) {
+  create(dto: UserDto) {
     return this.db.user.create(dto);
   }
 

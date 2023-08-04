@@ -23,5 +23,3 @@ export class EntityNotCreate extends HttpException {
     super(`${type} not create`, 400);
   }
 }
-
-// ////////////

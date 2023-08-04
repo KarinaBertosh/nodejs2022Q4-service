@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Album, Artist, Track, User } from 'src/utils/types';
 import { randomUUID } from 'crypto';
-import { CreateUserDto } from 'src/modules/users/dto/user.dto';
+import { UserDto } from 'src/modules/users/dto/user.dto';
 import { TrackDto } from 'src/modules/tracks/dto/track.dto';
 import { ArtistDto } from 'src/modules/artist/dto/artist.dto';
 import { AlbumDto } from 'src/modules/album/dto/album.dto';
@@ -78,7 +78,7 @@ export class DB {
     users.set(user.id, user);
   }
 
-  createUser(dto: CreateUserDto) {
+  createUser(dto: UserDto) {
     const time = Date.now();
     const user = {
       id: randomUUID(),
