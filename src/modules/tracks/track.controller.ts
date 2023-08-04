@@ -5,7 +5,6 @@ import {
   Get,
   HttpCode,
   Param,
-  ParseUUIDPipe,
   Post,
   Put,
 } from '@nestjs/common';
@@ -13,6 +12,7 @@ import { EntityNotExist } from 'src/errors/errors';
 import { TrackService } from './track.service';
 import { TrackDto, UpdateTrackDto } from './dto/track.dto';
 import { entities } from 'src/utils/entity';
+import { UUID } from 'src/database/uuid.dto';
 
 @Controller('track')
 export class TrackController {
@@ -23,7 +23,7 @@ export class TrackController {
   }
 
   @Get(':id')
-  getOne(@Param('id', ParseUUIDPipe) id: string) {
+  getOne(@Param() { id }: UUID) {
     return this.trackService.findOne(id);
   }
 
@@ -33,10 +33,7 @@ export class TrackController {
   }
 
   @Put(':id')
-  update(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Body() updateDto: UpdateTrackDto,
-  ) {
+  update(@Param() { id }: UUID, @Body() updateDto: UpdateTrackDto) {
     const track = this.trackService.findOne(id);
     if (!track) throw new EntityNotExist(entities.track);
     return this.trackService.update(track, updateDto);
@@ -44,7 +41,7 @@ export class TrackController {
 
   @HttpCode(204)
   @Delete(':id')
-  delete(@Param('id', ParseUUIDPipe) id: string) {
+  delete(@Param() { id }: UUID) {
     const track = this.trackService.findOne(id);
     return this.trackService.delete(track);
   }

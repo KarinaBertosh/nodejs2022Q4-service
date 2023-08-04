@@ -7,7 +7,6 @@ import {
   Param,
   Post,
   Put,
-  ParseUUIDPipe,
   UseInterceptors,
   ClassSerializerInterceptor,
 } from '@nestjs/common';
@@ -28,7 +27,7 @@ export class UserController {
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Get(':id')
-  getOne(@Param('id', ParseUUIDPipe) id: string) {
+  getOne(@Param() { id }: UUID) {
     return this.userService.findOne(id);
   }
 
@@ -39,10 +38,7 @@ export class UserController {
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Put(':id')
-  update(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Body() updateDto: UpdatePasswordDto,
-  ) {
+  update(@Param() { id }: UUID, @Body() updateDto: UpdatePasswordDto) {
     const user = this.userService.findOne(id);
     return this.userService.update(user, updateDto);
   }

@@ -5,7 +5,6 @@ import {
   Get,
   HttpCode,
   Param,
-  ParseUUIDPipe,
   Post,
   Put,
 } from '@nestjs/common';
@@ -24,7 +23,7 @@ export class AlbumController {
   }
 
   @Get(':id')
-  getOne(@Param('id', ParseUUIDPipe) id: string) {
+  getOne(@Param() { id }: UUID) {
     const album = this.albumService.findOne(id);
     if (!album) throw new EntityNotExist(entities.album);
     return album;
@@ -36,10 +35,7 @@ export class AlbumController {
   }
 
   @Put(':id')
-  update(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Body() updateDto: UpdateAlbumDto,
-  ) {
+  update(@Param() { id }: UUID, @Body() updateDto: UpdateAlbumDto) {
     const album = this.albumService.findOne(id);
     if (!album) throw new EntityNotExist(entities.album);
     album.artistId = updateDto.artistId;

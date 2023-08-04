@@ -5,7 +5,6 @@ import {
   Get,
   HttpCode,
   Param,
-  ParseUUIDPipe,
   Post,
   Put,
 } from '@nestjs/common';
@@ -24,7 +23,7 @@ export class ArtistController {
   }
 
   @Get(':id')
-  getOne(@Param('id', ParseUUIDPipe) id: string) {
+  getOne(@Param() { id }: UUID) {
     const artist = this.artistService.findOne(id);
     if (!artist) throw new EntityNotExist(entities.artist);
     return artist;
@@ -36,10 +35,7 @@ export class ArtistController {
   }
 
   @Put(':id')
-  update(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Body() updateDto: UpdateArtistDto,
-  ) {
+  update(@Param() { id }: UUID, @Body() updateDto: UpdateArtistDto) {
     const artist = this.artistService.findOne(id);
     if (!artist) throw new EntityNotExist(entities.artist);
     artist.grammy = updateDto.grammy;
