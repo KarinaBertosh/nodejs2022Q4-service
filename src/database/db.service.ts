@@ -133,6 +133,7 @@ export class DB {
 
   updateTrack(track: Track) {
     tracks.set(track.id, track);
+    return track;
   }
 
   //artist

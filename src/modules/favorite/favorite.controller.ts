@@ -19,11 +19,7 @@ export class FavoriteController {
   constructor(private favService: FavoriteService) {}
   @Get()
   getAll() {
-    const favorites = this.favService.findAll();
-    console.log(5, favorites);
-
-    // if (!favorites) throw new FavNotExist();
-    return favorites;
+    return this.favService.findAll();
   }
 
   @Post('/:type/:id')
