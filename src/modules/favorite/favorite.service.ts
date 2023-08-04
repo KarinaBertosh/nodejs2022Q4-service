@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { DB } from 'src/database/db.service';
 import { EntityNotExist, EntityNotFound } from 'src/errors/errors';
 import { entities } from 'src/utils/entity';
+import { Album, Track } from 'src/utils/types';
 
 const types = [entities.track, entities.album, entities.artist];
 
@@ -13,7 +14,7 @@ export class FavoriteService {
     return this.db.fav.findAll();
   }
 
-  async create(id: string, type: string): Promise<any> {
+  async create(id: string, type: string) {
     if (!types.includes(type)) throw new EntityNotExist(entities.fav);
     let item;
     switch (type) {
