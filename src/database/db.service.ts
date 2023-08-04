@@ -26,7 +26,6 @@ export class DB {
       findAll: this.findAllUser,
       findOne: this.findUser,
       create: this.createUser,
-      save: this.saveUser,
       update: this.updateUser,
       delete: this.deleteUser,
     };
@@ -94,15 +93,38 @@ export class DB {
       updatedAt: time,
     };
     users.set(user.id, user);
-    return user;
+    const userWithoutPassword = {
+      id: user.id,
+      login: user.login,
+      version: user.version,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    };
+    return userWithoutPassword;
   }
 
   updateUser(user: User) {
     users.set(user.id, user);
+    const userWithoutPassword = {
+      id: user.id,
+      login: user.login,
+      version: user.version,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    };
+    return userWithoutPassword;
   }
 
   deleteUser(user: User) {
     users.delete(user.id);
+    const userWithoutPassword = {
+      id: user.id,
+      login: user.login,
+      version: user.version,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    };
+    return userWithoutPassword;
   }
 
   //track

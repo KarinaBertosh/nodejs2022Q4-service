@@ -23,16 +23,15 @@ export class UserService {
     return this.db.user.create(dto);
   }
 
-  async update(user: any, updateDto: any): Promise<User> {
+  async update(user: any, updateDto: any) {
     if (!user) throw new UserNotExist();
     if (user.password !== updateDto.oldPassword)
       throw new HttpException('Password not right', 403);
     user.password = updateDto.newPassword;
     user.updatedAt = Date.now();
     user.version++;
-    await this.db.user.delete(user);
-    await this.db.user.save(user);
-    return user;
+    this.db.user.delete(user);
+    return this.db.user.update(user);
   }
 
   delete(user: any) {
