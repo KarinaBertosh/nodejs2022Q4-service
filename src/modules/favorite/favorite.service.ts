@@ -1,5 +1,9 @@
 import { Injectable, HttpException } from '@nestjs/common';
 import { DB } from 'src/database/db.service';
+import { EntityNotExist } from 'src/errors/errors';
+import { entities } from 'src/utils/entity';
+
+const types = ['track', 'album', 'artist'];
 
 @Injectable()
 export class FavoriteService {
@@ -10,6 +14,7 @@ export class FavoriteService {
   }
 
   async create(id: string, type: string): Promise<any> {
+    if (!types.includes(type)) throw new EntityNotExist(entities.fav);
     let item;
     switch (type) {
       case 'artist':
@@ -29,6 +34,7 @@ export class FavoriteService {
   }
 
   async delete(id: string, type: string) {
+    if (!types.includes(type)) throw new EntityNotExist(entities.fav);
     return this.db.fav.delete(id, type);
   }
 }
