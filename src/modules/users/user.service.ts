@@ -6,7 +6,6 @@ import { UserNotExist } from 'src/errors/errors';
 
 @Injectable()
 export class UserService {
-  // public type = 'users';
   constructor(private db: DB) {}
 
   findAll(): User[] {

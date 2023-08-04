@@ -234,11 +234,11 @@ export class DB {
     const currentAlbums = [...albums.values()];
 
     const findMany = (favs: string[], data: any) => {
-      const res = [];
+      const response = [];
       for (const item of data) {
-        if (favs.includes(item.id)) res.push({ ...item });
+        if (favs.includes(item.id)) response.push({ ...item });
       }
-      return res;
+      return response;
     };
 
     return {
@@ -250,22 +250,6 @@ export class DB {
 
   saveFav(id: string, type: string) {
     if (!validate(id)) throw new HttpException('invalid id', 400);
-    // const item = `${this.[`${type}`].findUnique(id)}`;
-    // let item;
-    // switch (type) {
-    //   case 'artist':
-    //     item = this.artist.findOne(id);
-    //     break;
-    //   case 'album':
-    //     item = this.album.findOne(id);
-    //     break;
-    //   case 'track':
-    //     item = this.track.findOne(id);
-    //     break;
-    // }
-    // if (!item) {
-    //   throw new HttpException(`${type} with provided id does not exist`, 422);
-    // }
     favorites[`${type}s`].push(id);
   }
 
