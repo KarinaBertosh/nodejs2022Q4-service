@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DB } from 'src/database/db.service';
-import { AlbumDto } from './dto/album.dto';
+import { AlbumDto, UpdateAlbumDto } from './dto/album.dto';
 import { EntityNotExist } from 'src/errors/errors';
 import { entities } from 'src/utils/entity';
 
@@ -22,11 +22,17 @@ export class AlbumService {
     return album;
   }
 
-  update(album: any) {
+  update(id: string, updateDto: UpdateAlbumDto) {
+    const album = this.findOne(id);
+    if (!album) throw new EntityNotExist(entities.album);
+    album.artistId = updateDto.artistId;
+    album.year = updateDto.year;
     return this.db.album.update(album);
   }
 
-  delete(album: any) {
+  delete(id: string) {
+    const album = this.findOne(id);
+    if (!album) throw new EntityNotExist(entities.album);
     return this.db.album.delete(album);
   }
 }

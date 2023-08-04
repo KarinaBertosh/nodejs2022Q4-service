@@ -36,19 +36,12 @@ export class AlbumController {
 
   @Put(':id')
   update(@Param() { id }: UUID, @Body() updateDto: UpdateAlbumDto) {
-    const album = this.albumService.findOne(id);
-    if (!album) throw new EntityNotExist(entities.album);
-    album.artistId = updateDto.artistId;
-    album.year = updateDto.year;
-    const updatedAlbum = this.albumService.update(album);
-    return updatedAlbum;
+    return this.albumService.update(id, updateDto);
   }
 
   @Delete(':id')
   @HttpCode(204)
   async delete(@Param() { id }: UUID) {
-    const album = this.albumService.findOne(id);
-    if (!album) throw new EntityNotExist(entities.album);
-    return this.albumService.delete(album);
+    return this.albumService.delete(id);
   }
 }
