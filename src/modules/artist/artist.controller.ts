@@ -9,10 +9,8 @@ import {
   Put,
 } from '@nestjs/common';
 import { UUID } from 'src/database/uuid.dto';
-import { EntityNotExist } from 'src/errors/errors';
 import { ArtistService } from './artist.service';
 import { ArtistDto, UpdateArtistDto } from './dto/artist.dto';
-import { entities } from 'src/utils/entity';
 
 @Controller('artist')
 export class ArtistController {
@@ -24,9 +22,7 @@ export class ArtistController {
 
   @Get(':id')
   getOne(@Param() { id }: UUID) {
-    const artist = this.artistService.findOne(id);
-    if (!artist) throw new EntityNotExist(entities.artist);
-    return artist;
+    return this.artistService.findOne(id);
   }
 
   @Post()
@@ -36,18 +32,12 @@ export class ArtistController {
 
   @Put(':id')
   update(@Param() { id }: UUID, @Body() updateDto: UpdateArtistDto) {
-    const artist = this.artistService.findOne(id);
-    if (!artist) throw new EntityNotExist(entities.artist);
-    artist.grammy = updateDto.grammy;
-    const updatedArtist = this.artistService.update(artist);
-    return updatedArtist;
+    return this.artistService.update(id, updateDto);
   }
 
   @Delete(':id')
   @HttpCode(204)
   async delete(@Param() { id }: UUID) {
-    const artist = this.artistService.findOne(id);
-    if (!artist) throw new EntityNotExist(entities.artist);
-    return this.artistService.delete(artist);
+    return this.artistService.delete(id);
   }
 }

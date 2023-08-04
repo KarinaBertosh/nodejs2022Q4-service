@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { DB } from 'src/database/db.service';
-import { ArtistDto } from './dto/artist.dto';
+import { ArtistDto, UpdateArtistDto } from './dto/artist.dto';
+import { EntityNotExist } from 'src/errors/errors';
+import { entities } from 'src/utils/entity';
 
 @Injectable()
 export class ArtistService {
@@ -11,7 +13,9 @@ export class ArtistService {
   }
 
   findOne(id: string) {
-    return this.db.artist.findOne(id);
+    const artist = this.db.artist.findOne(id);
+    if (!artist) throw new EntityNotExist(entities.artist);
+    return artist;
   }
 
   create(dto: ArtistDto) {
@@ -19,11 +23,16 @@ export class ArtistService {
     return artist;
   }
 
-  update(artist: any) {
+  update(id: string, dto: UpdateArtistDto) {
+    const artist = this.findOne(id);
+    if (!artist) throw new EntityNotExist(entities.artist);
+    artist.grammy = dto.grammy;
     return this.db.artist.update(artist);
   }
 
-  delete(artist: any) {
+  delete(id: string) {
+    const artist = this.findOne(id);
+    if (!artist) throw new EntityNotExist(entities.artist);
     return this.db.artist.delete(artist);
   }
 }

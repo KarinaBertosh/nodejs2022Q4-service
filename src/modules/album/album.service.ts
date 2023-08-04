@@ -13,7 +13,9 @@ export class AlbumService {
   }
 
   findOne(id: string) {
-    return this.db.album.findOne(id);
+    const album = this.db.album.findOne(id);
+    if (!album) throw new EntityNotExist(entities.album);
+    return album;
   }
 
   create(dto: AlbumDto) {
