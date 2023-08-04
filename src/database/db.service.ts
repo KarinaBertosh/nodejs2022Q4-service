@@ -168,6 +168,7 @@ export class DB {
 
   updateArtist(artist: Artist) {
     artists.set(artist.id, artist);
+    return artist;
   }
 
   //album
@@ -192,6 +193,7 @@ export class DB {
 
   updateAlbum(album: Album) {
     albums.set(album.id, album);
+    return album;
   }
 
   deleteAlbum(album: Album) {
