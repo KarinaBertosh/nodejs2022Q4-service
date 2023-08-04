@@ -10,7 +10,6 @@ import {
 } from '@nestjs/common';
 import { FavNotExist } from 'src/errors/errors';
 import { FavoriteService } from './favorite.service';
-import { Favorites } from 'src/utils/types';
 
 const types = ['track', 'album', 'artist'];
 
@@ -28,12 +27,7 @@ export class FavoriteController {
     @Param('type') type: string,
   ) {
     if (!types.includes(type)) throw new FavNotExist();
-    try {
-      return await this.favService.create(id, type);
-    } catch (error) {
-      if (error.message === '422')
-        throw new HttpException('Value not exists', 422);
-    }
+    return await this.favService.create(id, type);
   }
 
   @HttpCode(204)

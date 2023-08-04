@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException } from '@nestjs/common';
 import { Album, Artist, Track, User } from 'src/utils/types';
 import { randomUUID } from 'crypto';
 import { CreateUserDto } from 'src/modules/users/dto/user.dto';
 import { TrackDto } from 'src/modules/tracks/dto/track.dto';
 import { ArtistDto } from 'src/modules/artist/dto/artist.dto';
 import { AlbumDto } from 'src/modules/album/dto/album.dto';
+import { validate } from 'uuid';
 
 const users = new Map<string, User>();
 const artists = new Map<string, Artist>();
@@ -228,41 +229,44 @@ export class DB {
   //Fav
 
   findAllFav() {
-    const response = {};
+    const currentArtists = [...artists.values()];
+    const currentTracks = [...tracks.values()];
+    const currentAlbums = [...albums.values()];
 
-    for (const type in favorites) {
-      response[type] = favorites[type].map((e) => {
-        switch (type) {
-          case types.artists:
-            return artists.get(e);
-          case types.albums:
-            return albums.get(e);
-          case types.tracks:
-            return tracks.get(e);
-        }
-      });
-    }
-    return response;
+    const findMany = (favs: string[], data: any) => {
+      const res = [];
+      for (const item of data) {
+        if (favs.includes(item.id)) res.push({ ...item });
+      }
+      return res;
+    };
+
+    return {
+      artists: findMany(favorites.artists, currentArtists),
+      tracks: findMany(favorites.tracks, currentTracks),
+      albums: findMany(favorites.albums, currentAlbums),
+    };
   }
 
   saveFav(id: string, type: string) {
-    const currentType = type + 's';
-    let value = null;
-    switch (currentType) {
-      case types.artists:
-        value = artists.get(id);
-        break;
-      case types.albums:
-        value = albums.get(id);
-        break;
-
-      case types.tracks:
-        value = tracks.get(id);
-        break;
-    }
-    if (!value) throw new Error('422');
-    favorites[currentType].push(id);
-    return value;
+    if (!validate(id)) throw new HttpException('invalid id', 400);
+    // const item = `${this.[`${type}`].findUnique(id)}`;
+    // let item;
+    // switch (type) {
+    //   case 'artist':
+    //     item = this.artist.findOne(id);
+    //     break;
+    //   case 'album':
+    //     item = this.album.findOne(id);
+    //     break;
+    //   case 'track':
+    //     item = this.track.findOne(id);
+    //     break;
+    // }
+    // if (!item) {
+    //   throw new HttpException(`${type} with provided id does not exist`, 422);
+    // }
+    favorites[`${type}s`].push(id);
   }
 
   deleteFav(id: string, type: string) {
