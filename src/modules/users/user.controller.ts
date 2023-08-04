@@ -13,8 +13,9 @@ import {
 import { UserService } from './user.service';
 import { UUID } from 'src/database/uuid.dto';
 import { UserDto, UpdatePasswordDto } from './dto/user.dto';
+import { entities } from 'src/utils/entity';
 
-@Controller('user')
+@Controller(entities.user)
 export class UserController {
   constructor(private userService: UserService) {}
   @UseInterceptors(ClassSerializerInterceptor)

@@ -11,8 +11,9 @@ import {
 import { UUID } from 'src/database/uuid.dto';
 import { AlbumService } from './album.service';
 import { AlbumDto, UpdateAlbumDto } from './dto/album.dto';
+import { entities } from 'src/utils/entity';
 
-@Controller('album')
+@Controller(entities.album)
 export class AlbumController {
   constructor(private albumService: AlbumService) {}
   @Get()

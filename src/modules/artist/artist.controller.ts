@@ -11,8 +11,9 @@ import {
 import { UUID } from 'src/database/uuid.dto';
 import { ArtistService } from './artist.service';
 import { ArtistDto, UpdateArtistDto } from './dto/artist.dto';
+import { entities } from 'src/utils/entity';
 
-@Controller('artist')
+@Controller(entities.artist)
 export class ArtistController {
   constructor(private artistService: ArtistService) {}
   @Get()

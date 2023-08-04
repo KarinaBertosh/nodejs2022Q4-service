@@ -4,4 +4,5 @@ export const entities = {
   artist: 'artist',
   album: 'album',
   fav: 'favorite',
+  favs: 'favs',
 };

@@ -11,8 +11,9 @@ import {
 import { TrackService } from './track.service';
 import { TrackDto, UpdateTrackDto } from './dto/track.dto';
 import { UUID } from 'src/database/uuid.dto';
+import { entities } from 'src/utils/entity';
 
-@Controller('track')
+@Controller(entities.track)
 export class TrackController {
   constructor(private trackService: TrackService) {}
   @Get()
