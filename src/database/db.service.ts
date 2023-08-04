@@ -221,8 +221,9 @@ export class DB {
   }
 
   saveFav(id: string, type: string) {
+    const currentType = type + 's';
     let value = null;
-    switch (type) {
+    switch (currentType) {
       case types.artists:
         value = artists.get(id);
         break;
@@ -235,11 +236,12 @@ export class DB {
         break;
     }
     if (!value) throw new Error('422');
-    favorites[type].push(id);
+    favorites[currentType].push(id);
     return value;
   }
 
   deleteFav(id: string, type: string) {
-    favorites[type] = favorites[type].filter((v) => v != id);
+    const currentType = type + 's';
+    favorites[currentType] = favorites[currentType].filter((v) => v != id);
   }
 }

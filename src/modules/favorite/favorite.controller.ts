@@ -1,5 +1,4 @@
 import {
-  Body,
   Controller,
   Delete,
   Get,
@@ -8,11 +7,10 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
-  Put,
 } from '@nestjs/common';
-import { UUID } from 'src/database/uuid.dto';
-import { AlbumNotExist, FavNotExist } from 'src/errors/errors';
+import { FavNotExist } from 'src/errors/errors';
 import { FavoriteService } from './favorite.service';
+import { Favorites } from 'src/utils/types';
 
 const types = ['track', 'album', 'artist'];
 
@@ -21,7 +19,11 @@ export class FavoriteController {
   constructor(private favService: FavoriteService) {}
   @Get()
   getAll() {
-    return this.favService.findAll();
+    const favorites = this.favService.findAll();
+    console.log(5, favorites);
+
+    // if (!favorites) throw new FavNotExist();
+    return favorites;
   }
 
   @Post('/:type/:id')
