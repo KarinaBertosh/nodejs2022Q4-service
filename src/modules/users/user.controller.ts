@@ -12,9 +12,7 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UUID } from 'src/database/uuid.dto';
-import { EntityNotExist } from 'src/errors/errors';
 import { CreateUserDto, UpdatePasswordDto } from './dto/user.dto';
-import { entities } from 'src/utils/entity';
 
 @Controller('user')
 export class UserController {
@@ -39,15 +37,12 @@ export class UserController {
   @UseInterceptors(ClassSerializerInterceptor)
   @Put(':id')
   update(@Param() { id }: UUID, @Body() updateDto: UpdatePasswordDto) {
-    const user = this.userService.findOne(id);
-    return this.userService.update(user, updateDto);
+    return this.userService.update(id, updateDto);
   }
 
   @Delete(':id')
   @HttpCode(204)
   async delete(@Param() { id }: UUID) {
-    const user = this.userService.findOne(id);
-    if (!user) throw new EntityNotExist(entities.track);
-    return this.userService.delete(user);
+    return this.userService.delete(id);
   }
 }

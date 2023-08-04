@@ -23,7 +23,8 @@ export class UserService {
     return this.db.user.create(dto);
   }
 
-  async update(user: any, updateDto: any) {
+  async update(id: string, updateDto: any) {
+    const user = this.findOne(id);
     if (!user) throw new EntityNotExist(entities.track);
     if (user.password !== updateDto.oldPassword)
       throw new HttpException('Password not right', 403);
@@ -34,7 +35,9 @@ export class UserService {
     return this.db.user.update(user);
   }
 
-  delete(user: any) {
+  delete(id: string) {
+    const user = this.findOne(id);
+    if (!user) throw new EntityNotExist(entities.track);
     return this.db.user.delete(user);
   }
 }
