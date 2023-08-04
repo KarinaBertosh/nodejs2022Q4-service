@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { DB } from 'src/database/db.service';
 import { TrackDto, UpdateTrackDto } from './dto/track.dto';
+import { TrackNotExist } from 'src/errors/errors';
+import { Track } from 'src/utils/types';
 // import { CreateUserDto } from './dto/user.dto';
 
 @Injectable()
@@ -12,11 +14,13 @@ export class TrackService {
   }
 
   findOne(id: string) {
-    return this.db.track.findOne(id);
+    const track = this.db.track.findOne(id);
+    if (!track) throw new TrackNotExist();
+    return track;
   }
 
-  create(dto: TrackDto) {
-    const track = this.db.track.create(dto);
+  async create(dto: TrackDto): Promise<Track> {
+    const track = await this.db.track.create(dto);
     return track;
   }
 

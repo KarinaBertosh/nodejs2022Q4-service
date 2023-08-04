@@ -31,9 +31,7 @@ export class TrackController {
 
   @Get(':id')
   getOne(@Param('id', ParseUUIDPipe) id: string) {
-    const track = this.trackService.findOne(id);
-    if (!track) throw new TrackNotExist();
-    return track;
+    return this.trackService.findOne(id);
   }
 
   @Post()

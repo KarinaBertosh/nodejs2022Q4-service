@@ -114,7 +114,7 @@ export class DB {
     return tracks.get(id);
   }
 
-  createTrack(dto: TrackDto) {
+  createTrack(dto: TrackDto): Track {
     const track = {
       id: randomUUID(),
       name: dto.name,
@@ -122,6 +122,8 @@ export class DB {
       albumId: dto.albumId ?? null,
       duration: dto.duration,
     };
+    console.log(15, track);
+
     tracks.set(track.id, track);
     return track;
   }

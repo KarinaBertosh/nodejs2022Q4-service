@@ -7,14 +7,12 @@ export class TrackDto {
   name: string;
 
   @IsNotEmpty()
-  artistId: string | null;
-
-  @IsNotEmpty()
-  albumId: string | null;
-
-  @IsNotEmpty()
   @IsNumber()
   duration: number;
+
+  artistId: string | null;
+
+  albumId: string | null;
 }
 
 export class UpdateTrackDto extends PartialType(TrackDto) {
