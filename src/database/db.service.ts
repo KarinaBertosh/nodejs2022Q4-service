@@ -12,21 +12,21 @@ const albums = new Map<string, Album>();
 const tracks = new Map<string, Track>();
 const favorites = { artists: [], albums: [], tracks: [] };
 
+const types = {
+  users: 'users',
+  tracks: 'tracks',
+  artists: 'artists',
+  albums: 'albums',
+};
+
 @Injectable()
 export class DB {
-  public type = {
-    users: 'users',
-    tracks: 'tracks',
-    artists: 'artists',
-    albums: 'albums',
-    favorites: 'favs',
-  };
-
   get user() {
     return {
       findAll: this.findAllUser,
       findOne: this.findUser,
       create: this.createUser,
+      save: this.saveUser,
       update: this.updateUser,
       delete: this.deleteUser,
     };
@@ -79,6 +79,10 @@ export class DB {
     return users.get(id);
   }
 
+  async saveUser(user: User) {
+    users.set(user.id, user);
+  }
+
   createUser(dto: CreateUserDto) {
     const time = Date.now();
     const user = {
@@ -122,13 +126,14 @@ export class DB {
     return track;
   }
 
-  updateTrack(track: Track) {
-    tracks.delete(track.id);
-    tracks.set(track.id, track);
+  deleteTrack(track: Track) {
+    this.fav.delete(track.id, types.tracks);
+    tracks.delete(`${track.id}`);
   }
 
-  deleteTrack(track: Track) {
-    tracks.delete(track.id);
+  updateTrack(track: Track) {
+    this.deleteTrack(track);
+    tracks.set(track.id, track);
   }
 
   //artist
@@ -150,13 +155,21 @@ export class DB {
     return artist;
   }
 
-  updateArtist(artist: Artist) {
-    artists.delete(artist.id);
-    artists.set(artist.id, artist);
+  deleteArtist(artist: Artist) {
+    for (const album of albums.values()) {
+      if (album.artistId === artist.id) album.artistId = null;
+    }
+    for (const track of tracks.values()) {
+      if (track.artistId === artist.id) track.artistId = null;
+    }
+
+    // this.deleteFav(artist.id, types.artists);
+    artists && artists.delete(`${artist.id}`);
   }
 
-  deleteArtist(artist: Artist) {
-    artists.delete(artist.id);
+  updateArtist(artist: Artist) {
+    // this.artist.delete(artist);
+    artists.set(artist.id, artist);
   }
 
   //album
@@ -180,31 +193,50 @@ export class DB {
   }
 
   updateAlbum(album: Album) {
-    albums.delete(album.id);
+    this.deleteAlbum(album);
     albums.set(album.id, album);
   }
 
   deleteAlbum(album: Album) {
+    for (const track of tracks.values()) {
+      if (track.albumId === album.id) track.albumId = null;
+    }
+
+    this.fav.delete(album.id, types.albums);
     albums.delete(album.id);
   }
 
   //Fav
 
   findAllFav() {
-    return favorites;
+    const response = {};
+
+    for (const type in favorites) {
+      response[type] = favorites[type].map((e) => {
+        switch (type) {
+          case types.artists:
+            return artists.get(e);
+          case types.albums:
+            return albums.get(e);
+          case types.tracks:
+            return tracks.get(e);
+        }
+      });
+    }
+    return response;
   }
 
   saveFav(id: string, type: string) {
     let value = null;
     switch (type) {
-      case 'artist':
+      case types.artists:
         value = artists.get(id);
         break;
-      case 'album':
+      case types.albums:
         value = albums.get(id);
         break;
 
-      case 'track':
+      case types.tracks:
         value = tracks.get(id);
         break;
     }

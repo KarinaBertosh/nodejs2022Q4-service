@@ -10,7 +10,7 @@ import {
   Put,
 } from '@nestjs/common';
 import { UUID } from 'src/database/uuid.dto';
-import { ArtistNotExist, TrackNotExist } from 'src/errors/errors';
+import { ArtistNotExist } from 'src/errors/errors';
 import { ArtistService } from './artist.service';
 import { ArtistDto, UpdateArtistDto } from './dto/artist.dto';
 

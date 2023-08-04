@@ -7,16 +7,12 @@ import {
   Param,
   Post,
   Put,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UUID } from 'src/database/uuid.dto';
-import {
-  PasswordNotCorrect,
-  UserNotCreate,
-  UserNotExist,
-} from 'src/errors/errors';
+import { UserNotExist } from 'src/errors/errors';
 import { CreateUserDto, UpdatePasswordDto } from './dto/user.dto';
-import { User } from 'src/utils/types';
 
 @Controller('user')
 export class UserController {
@@ -27,10 +23,8 @@ export class UserController {
   }
 
   @Get(':id')
-  getOne(@Param() { id }: UUID) {
-    const user = this.userService.findOne(id);
-    if (!user) throw new UserNotExist();
-    return user;
+  getOne(@Param('id', ParseUUIDPipe) id: string) {
+    return this.userService.findOne(id);
   }
 
   @Post()
@@ -39,15 +33,12 @@ export class UserController {
   }
 
   @Put(':id')
-  async update(
-    @Param() { id }: UUID,
-    @Body() { newPassword }: UpdatePasswordDto,
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateDto: UpdatePasswordDto,
   ) {
     const user = this.userService.findOne(id);
-    if (!user) throw new UserNotExist();
-    user.password = newPassword;
-    const updatedUser = await this.userService.update(user);
-    return updatedUser;
+    return this.userService.update(user, updateDto);
   }
 
   @Delete(':id')
