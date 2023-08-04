@@ -1,7 +1,5 @@
 import { Controller, Delete, Get, HttpCode, Param, Post } from '@nestjs/common';
-import { EntityNotExist } from 'src/errors/errors';
 import { FavoriteService } from './favorite.service';
-import { entities } from 'src/utils/entity';
 import { UUID } from 'src/database/uuid.dto';
 
 @Controller('favs')
