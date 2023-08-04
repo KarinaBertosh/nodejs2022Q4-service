@@ -3,7 +3,7 @@ import { DB } from 'src/database/db.service';
 import { EntityNotExist, EntityNotFound } from 'src/errors/errors';
 import { entities } from 'src/utils/entity';
 
-const types = ['track', 'album', 'artist'];
+const types = [entities.track, entities.album, entities.artist];
 
 @Injectable()
 export class FavoriteService {
@@ -17,13 +17,13 @@ export class FavoriteService {
     if (!types.includes(type)) throw new EntityNotExist(entities.fav);
     let item;
     switch (type) {
-      case 'artist':
+      case entities.artist:
         item = this.db.artist.findOne(id);
         break;
-      case 'album':
+      case entities.album:
         item = this.db.album.findOne(id);
         break;
-      case 'track':
+      case entities.track:
         item = this.db.track.findOne(id);
         break;
     }
