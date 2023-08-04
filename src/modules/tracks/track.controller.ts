@@ -46,10 +46,7 @@ export class TrackController {
   ) {
     const track = this.trackService.findOne(id);
     if (!track) throw new TrackNotExist();
-    track.albumId = updateDto.albumId;
-    track.artistId = updateDto.artistId;
-    const updatedTrack = this.trackService.update(track);
-    return updatedTrack;
+    return this.trackService.update(track, updateDto);
   }
 
   @HttpCode(204)

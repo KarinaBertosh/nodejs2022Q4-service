@@ -20,11 +20,14 @@ export class TrackService {
   }
 
   async create(dto: TrackDto): Promise<Track> {
-    const track = await this.db.track.create(dto);
-    return track;
+    return await this.db.track.create(dto);
   }
 
-  update(track: any) {
+  update(track: any, updateDto: UpdateTrackDto) {
+    track.albumId = updateDto.albumId;
+    track.name = updateDto.name;
+    track.duration = updateDto.duration;
+    track.artistId = updateDto.artistId;
     return this.db.track.update(track);
   }
 
