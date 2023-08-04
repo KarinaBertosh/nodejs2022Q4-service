@@ -13,8 +13,9 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UUID } from 'src/database/uuid.dto';
-import { UserNotExist } from 'src/errors/errors';
+import { EntityNotExist } from 'src/errors/errors';
 import { CreateUserDto, UpdatePasswordDto } from './dto/user.dto';
+import { entities } from 'src/utils/entity';
 
 @Controller('user')
 export class UserController {
@@ -50,7 +51,7 @@ export class UserController {
   @HttpCode(204)
   async delete(@Param() { id }: UUID) {
     const user = this.userService.findOne(id);
-    if (!user) throw new UserNotExist();
+    if (!user) throw new EntityNotExist(entities.track);
     return this.userService.delete(user);
   }
 }

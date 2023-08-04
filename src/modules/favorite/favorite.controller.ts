@@ -7,8 +7,9 @@ import {
   ParseUUIDPipe,
   Post,
 } from '@nestjs/common';
-import { FavNotExist } from 'src/errors/errors';
+import { EntityNotExist } from 'src/errors/errors';
 import { FavoriteService } from './favorite.service';
+import { entities } from 'src/utils/entity';
 
 const types = ['track', 'album', 'artist'];
 
@@ -25,14 +26,14 @@ export class FavoriteController {
     @Param('id', ParseUUIDPipe) id: string,
     @Param('type') type: string,
   ) {
-    if (!types.includes(type)) throw new FavNotExist();
+    if (!types.includes(type)) throw new EntityNotExist(entities.fav);
     return await this.favService.create(id, type);
   }
 
   @HttpCode(204)
   @Delete('/:type/:id')
   remove(@Param('id', ParseUUIDPipe) id: string, @Param('type') type: string) {
-    if (!types.includes(type)) throw new FavNotExist();
+    if (!types.includes(type)) throw new EntityNotExist(entities.fav);
     return this.favService.delete(id, type);
   }
 }

@@ -10,9 +10,10 @@ import {
   Put,
 } from '@nestjs/common';
 import { UUID } from 'src/database/uuid.dto';
-import { AlbumNotExist } from 'src/errors/errors';
+import { EntityNotExist } from 'src/errors/errors';
 import { AlbumService } from './album.service';
 import { AlbumDto, UpdateAlbumDto } from './dto/album.dto';
+import { entities } from 'src/utils/entity';
 
 @Controller('album')
 export class AlbumController {
@@ -25,7 +26,7 @@ export class AlbumController {
   @Get(':id')
   getOne(@Param('id', ParseUUIDPipe) id: string) {
     const album = this.albumService.findOne(id);
-    if (!album) throw new AlbumNotExist();
+    if (!album) throw new EntityNotExist(entities.album);
     return album;
   }
 
@@ -40,7 +41,7 @@ export class AlbumController {
     @Body() updateDto: UpdateAlbumDto,
   ) {
     const album = this.albumService.findOne(id);
-    if (!album) throw new AlbumNotExist();
+    if (!album) throw new EntityNotExist(entities.album);
     album.artistId = updateDto.artistId;
     album.year = updateDto.year;
     const updatedAlbum = this.albumService.update(album);
@@ -51,7 +52,7 @@ export class AlbumController {
   @HttpCode(204)
   async delete(@Param() { id }: UUID) {
     const album = this.albumService.findOne(id);
-    if (!album) throw new AlbumNotExist();
+    if (!album) throw new EntityNotExist(entities.album);
     return this.albumService.delete(album);
   }
 }

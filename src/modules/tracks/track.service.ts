@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { DB } from 'src/database/db.service';
 import { TrackDto, UpdateTrackDto } from './dto/track.dto';
-import { TrackNotExist } from 'src/errors/errors';
+import { EntityNotExist } from 'src/errors/errors';
 import { Track } from 'src/utils/types';
+import { entities } from 'src/utils/entity';
 
 @Injectable()
 export class TrackService {
@@ -14,7 +15,7 @@ export class TrackService {
 
   findOne(id: string) {
     const track = this.db.track.findOne(id);
-    if (!track) throw new TrackNotExist();
+    if (!track) throw new EntityNotExist(entities.track);
     return track;
   }
 

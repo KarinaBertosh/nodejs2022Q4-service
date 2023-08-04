@@ -9,9 +9,10 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { TrackNotExist } from 'src/errors/errors';
+import { EntityNotExist } from 'src/errors/errors';
 import { TrackService } from './track.service';
 import { TrackDto, UpdateTrackDto } from './dto/track.dto';
+import { entities } from 'src/utils/entity';
 
 @Controller('track')
 export class TrackController {
@@ -37,7 +38,7 @@ export class TrackController {
     @Body() updateDto: UpdateTrackDto,
   ) {
     const track = this.trackService.findOne(id);
-    if (!track) throw new TrackNotExist();
+    if (!track) throw new EntityNotExist(entities.track);
     return this.trackService.update(track, updateDto);
   }
 

@@ -2,7 +2,8 @@ import { Injectable, HttpException } from '@nestjs/common';
 import { DB } from 'src/database/db.service';
 import { CreateUserDto } from './dto/user.dto';
 import { User } from 'src/utils/types';
-import { UserNotExist } from 'src/errors/errors';
+import { EntityNotExist } from 'src/errors/errors';
+import { entities } from 'src/utils/entity';
 
 @Injectable()
 export class UserService {
@@ -14,7 +15,7 @@ export class UserService {
 
   findOne(id: string) {
     const user = this.db.user.findOne(id);
-    if (!user) throw new UserNotExist();
+    if (!user) throw new EntityNotExist(entities.track);
     return user;
   }
 
@@ -23,7 +24,7 @@ export class UserService {
   }
 
   async update(user: any, updateDto: any) {
-    if (!user) throw new UserNotExist();
+    if (!user) throw new EntityNotExist(entities.track);
     if (user.password !== updateDto.oldPassword)
       throw new HttpException('Password not right', 403);
     user.password = updateDto.newPassword;

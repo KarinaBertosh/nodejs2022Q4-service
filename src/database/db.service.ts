@@ -1,4 +1,4 @@
-import { Injectable, HttpException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Album, Artist, Track, User } from 'src/utils/types';
 import { randomUUID } from 'crypto';
 import { CreateUserDto } from 'src/modules/users/dto/user.dto';
@@ -6,19 +6,14 @@ import { TrackDto } from 'src/modules/tracks/dto/track.dto';
 import { ArtistDto } from 'src/modules/artist/dto/artist.dto';
 import { AlbumDto } from 'src/modules/album/dto/album.dto';
 import { validate } from 'uuid';
+import { EntityNotCreate } from 'src/errors/errors';
+import { entities } from 'src/utils/entity';
 
 const users = new Map<string, User>();
 const artists = new Map<string, Artist>();
 const albums = new Map<string, Album>();
 const tracks = new Map<string, Track>();
 const favorites = { artists: [], albums: [], tracks: [] };
-
-const types = {
-  users: 'users',
-  tracks: 'tracks',
-  artists: 'artists',
-  albums: 'albums',
-};
 
 @Injectable()
 export class DB {
@@ -249,7 +244,7 @@ export class DB {
   }
 
   saveFav(id: string, type: string) {
-    if (!validate(id)) throw new HttpException('invalid id', 400);
+    if (!validate(id)) throw new EntityNotCreate(entities.fav);
     favorites[`${type}s`].push(id);
   }
 
