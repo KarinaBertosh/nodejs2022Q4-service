@@ -3,7 +3,6 @@ import { DB } from 'src/database/db.service';
 import { TrackDto, UpdateTrackDto } from './dto/track.dto';
 import { TrackNotExist } from 'src/errors/errors';
 import { Track } from 'src/utils/types';
-// import { CreateUserDto } from './dto/user.dto';
 
 @Injectable()
 export class TrackService {

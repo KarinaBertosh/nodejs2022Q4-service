@@ -162,12 +162,10 @@ export class DB {
       if (track.artistId === artist.id) track.artistId = null;
     }
 
-    // this.deleteFav(artist.id, types.artists);
-    artists && artists.delete(`${artist.id}`);
+    artists && artists.delete(artist.id);
   }
 
   updateArtist(artist: Artist) {
-    // this.artist.delete(artist);
     artists.set(artist.id, artist);
   }
 
@@ -192,7 +190,6 @@ export class DB {
   }
 
   updateAlbum(album: Album) {
-    this.deleteAlbum(album);
     albums.set(album.id, album);
   }
 
@@ -200,8 +197,6 @@ export class DB {
     for (const track of tracks.values()) {
       if (track.albumId === album.id) track.albumId = null;
     }
-
-    this.fav.delete(album.id, types.albums);
     albums.delete(album.id);
   }
 

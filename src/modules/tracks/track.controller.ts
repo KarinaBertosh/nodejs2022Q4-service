@@ -9,15 +9,7 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-// import { UserService } from './user.service';
-import { UUID } from 'src/database/uuid.dto';
-import {
-  PasswordNotCorrect,
-  TrackNotExist,
-  UserNotCreate,
-  UserNotExist,
-} from 'src/errors/errors';
-// import { CreateUserDto, UpdatePasswordDto } from './dto/user.dto';
+import { TrackNotExist } from 'src/errors/errors';
 import { TrackService } from './track.service';
 import { TrackDto, UpdateTrackDto } from './dto/track.dto';
 

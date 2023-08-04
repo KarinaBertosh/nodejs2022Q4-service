@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DB } from 'src/database/db.service';
 import { AlbumDto } from './dto/album.dto';
+import { AlbumNotExist } from 'src/errors/errors';
 
 @Injectable()
 export class AlbumService {
@@ -16,6 +17,7 @@ export class AlbumService {
 
   create(dto: AlbumDto) {
     const album = this.db.album.create(dto);
+    if (!album) throw new AlbumNotExist();
     return album;
   }
 
@@ -23,7 +25,7 @@ export class AlbumService {
     return this.db.album.update(album);
   }
 
-  delete(artist: any) {
-    return this.db.artist.delete(artist);
+  delete(album: any) {
+    return this.db.album.delete(album);
   }
 }
