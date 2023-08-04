@@ -74,10 +74,6 @@ export class DB {
     return users.get(id);
   }
 
-  async saveUser(user: User) {
-    users.set(user.id, user);
-  }
-
   createUser(dto: UserDto) {
     const time = Date.now();
     const user = {
@@ -88,7 +84,9 @@ export class DB {
       createdAt: time,
       updatedAt: time,
     };
+
     users.set(user.id, user);
+
     const userWithoutPassword = {
       id: user.id,
       login: user.login,
@@ -101,6 +99,7 @@ export class DB {
 
   updateUser(user: User) {
     users.set(user.id, user);
+
     const userWithoutPassword = {
       id: user.id,
       login: user.login,
@@ -113,6 +112,7 @@ export class DB {
 
   deleteUser(user: User) {
     users.delete(user.id);
+
     const userWithoutPassword = {
       id: user.id,
       login: user.login,
@@ -142,6 +142,7 @@ export class DB {
     };
 
     tracks.set(track.id, track);
+
     return track;
   }
 
@@ -169,7 +170,9 @@ export class DB {
       name: dto.name,
       grammy: dto.grammy,
     };
+
     artists.set(artist.id, artist);
+
     return artist;
   }
 
@@ -177,6 +180,7 @@ export class DB {
     for (const album of albums.values()) {
       if (album.artistId === artist.id) album.artistId = null;
     }
+
     for (const track of tracks.values()) {
       if (track.artistId === artist.id) track.artistId = null;
     }
