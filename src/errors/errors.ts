@@ -6,17 +6,17 @@ export class EntityNotExist extends HttpException {
   }
 }
 
-// export class BadRequest extends HttpException {
-//   constructor() {
-//     super('id is invalid (not uuid)', HttpStatus.BAD_REQUEST);
-//   }
-// }
+export class PasswordNotRight extends HttpException {
+  constructor() {
+    super('Password not right', 403);
+  }
+}
 
-// export class EntityNotFound extends HttpException {
-//   constructor(type: string) {
-//     super(`${type} id not found`, 422);
-//   }
-// }
+export class EntityNotFound extends HttpException {
+  constructor(type: string) {
+    super(`${type} id not found`, 422);
+  }
+}
 
 export class EntityNotCreate extends HttpException {
   constructor(type: string) {

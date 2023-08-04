@@ -1,6 +1,6 @@
-import { Injectable, HttpException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { DB } from 'src/database/db.service';
-import { EntityNotExist } from 'src/errors/errors';
+import { EntityNotExist, EntityNotFound } from 'src/errors/errors';
 import { entities } from 'src/utils/entity';
 
 const types = ['track', 'album', 'artist'];
@@ -28,7 +28,7 @@ export class FavoriteService {
         break;
     }
     if (!item) {
-      throw new HttpException(`${type} with provided id does not exist`, 422);
+      throw new EntityNotFound(type);
     }
     return await this.db.fav.save(id, type);
   }
