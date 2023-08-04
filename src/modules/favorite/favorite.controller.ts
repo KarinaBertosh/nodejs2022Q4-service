@@ -18,7 +18,7 @@ export class FavoriteController {
 
   @HttpCode(204)
   @Delete('/:type/:id')
-  remove(@Param() { id }: UUID, @Param('type') type: string) {
+  delete(@Param() { id }: UUID, @Param('type') type: string) {
     return this.favService.delete(id, type);
   }
 }
