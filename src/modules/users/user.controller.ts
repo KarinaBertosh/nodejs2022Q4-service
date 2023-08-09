@@ -14,6 +14,7 @@ import { UserService } from './user.service';
 import { UUID } from 'src/database/uuid.dto';
 import { UserDto, UpdatePasswordDto } from './dto/user.dto';
 import { entities } from 'src/utils/entity';
+import { EntityNotExist } from 'src/errors/errors';
 
 @Controller(entities.user)
 export class UserController {
@@ -31,6 +32,7 @@ export class UserController {
   }
 
   @Post()
+  @HttpCode(201)
   create(@Body() createUserDto: UserDto) {
     return this.userService.create(createUserDto);
   }
