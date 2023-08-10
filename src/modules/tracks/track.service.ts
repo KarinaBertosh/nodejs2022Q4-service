@@ -2,39 +2,48 @@ import { Injectable } from '@nestjs/common';
 import { DB } from 'src/database/db.service';
 import { TrackDto, UpdateTrackDto } from './dto/track.dto';
 import { EntityNotExist } from 'src/errors/errors';
-import { Track } from 'src/utils/types';
+// import { Track } from 'src/utils/types';
 import { entities } from 'src/utils/entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Track } from './track.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class TrackService {
-  constructor(private db: DB) {}
+  constructor(
+    @InjectRepository(Track)
+    private readonly trackRepository: Repository<Track>) {}
 
-  findAll() {
-    return this.db.track.findAll();
+  async findAll() {
+    return await this.trackRepository.find();
   }
 
-  findOne(id: string) {
-    const track = this.db.track.findOne(id);
-    if (!track) throw new EntityNotExist(entities.track);
+  async findOne(id: string, skipErrors = false) {
+    const track = await this.trackRepository.findOne({ where: { id } });
+
+    if (!track && !skipErrors) throw new EntityNotExist(entities.track);
+    if (!track && skipErrors) return null;
+
     return track;
   }
 
-  async create(dto: TrackDto): Promise<Track> {
-    return await this.db.track.create(dto);
+  async create(createDto: TrackDto) {
+    const newTrack = await this.trackRepository.create({ ...createDto });
+    return await this.trackRepository.save(newTrack);
   }
 
-  update(id: string, updateDto: UpdateTrackDto) {
-    const track = this.findOne(id);
+  async update(id: string, updateDto: UpdateTrackDto) {
+    const track = await this.findOne(id);
+
     if (!track) throw new EntityNotExist(entities.track);
-    track.albumId = updateDto.albumId;
-    track.name = updateDto.name;
-    track.duration = updateDto.duration;
-    track.artistId = updateDto.artistId;
-    return this.db.track.update(track);
+    const updatedTrack = Object.assign(track, updateDto);
+
+    return await this.trackRepository.save(updatedTrack);
   }
 
   async delete(id: string) {
-    const track = this.findOne(id);
-    return await this.db.track.delete(track);
+    const track = await this.findOne(id);
+    if (!track) throw new EntityNotExist(entities.track);
+    await this.trackRepository.delete(id);
   }
 }
