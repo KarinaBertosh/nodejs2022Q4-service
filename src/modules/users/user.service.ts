@@ -1,73 +1,60 @@
-import { Injectable } from '@nestjs/common';
-import { UserDto } from './dto/user.dto';
-import { EntityNotExist, PasswordNotRight } from 'src/errors/errors';
-import { entities } from 'src/utils/entity';
-import { User } from './user.entity.js';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { User } from './user.entity';
+import { UpdatePasswordDto, UserDto } from './dto/user.dto';
 import { randomUUID } from 'crypto';
+import { EntityNotExist, PasswordNotRight } from 'src/errors/errors';
+import { entities } from 'src/utils/entity';
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(User) private userRepository: Repository<User>,
-  ) {}
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+  ) { }
 
-  async findAll(): Promise<User[]> {
-    const user = await this.userRepository.find();
+  async create(createDto: UserDto) {
+    const newUser = new User({ ...createDto });
+    newUser.id = randomUUID();
+    const user = this.userRepository.create(newUser);
+    await this.userRepository.save(user);
+    await delete user.password;
     return user;
+  }
+
+  async findAll() {
+    return await this.userRepository.find();
   }
 
   async findOne(id: string) {
     const user = await this.userRepository.findOne({ where: { id } });
-    if (!user) throw new EntityNotExist(entities.user);
+
+    if (!user) {
+      throw new HttpException(
+        `User with id: ${id} not found`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
     return user;
   }
 
-  async create(dto: UserDto) {
-    const time = Date.now();
-    const user = {
-      id: randomUUID(),
-      login: dto.login,
-      password: dto.password,
-      version: 1,
-      createdAt: time,
-      updatedAt: time,
-    };
-
-    await this.userRepository.create(user);
-    // await this.userRepository.save(createdUser);
-
-    const userWithoutPass = {
-      id: user.id,
-      login: user.login,
-      version: user.version,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
-    };
-
-    return userWithoutPass;
-  }
-
-  async update(id: string, updateDto: any) {
-    const { oldPassword, newPassword } = updateDto;
+  async update(id: string, updateUserDto: UpdatePasswordDto) {
+    const { oldPassword, newPassword } = updateUserDto;
     const user = await this.findOne(id);
-    if (!user) throw new EntityNotExist(entities.user);
 
+    if (!user) throw new EntityNotExist(entities.user);
     if (oldPassword !== user.password) throw new PasswordNotRight();
 
     user.password = newPassword;
     await this.userRepository.save(user);
-
-    const responseUser = { ...user };
-    delete responseUser.password;
-
-    return responseUser;
+    delete user.password;
+    return user;
   }
 
-  async delete(id: string): Promise<void> {
+  async delete(id: string) {
     const deletedUser = await this.userRepository.delete(id);
-
     if (deletedUser.affected !== 1) throw new EntityNotExist(entities.user);
   }
 }

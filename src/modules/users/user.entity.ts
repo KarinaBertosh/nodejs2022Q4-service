@@ -1,7 +1,17 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  PrimaryColumn,
+  VersionColumn,
+  CreateDateColumn,
+} from 'typeorm';
 
-@Entity()
+@Entity('users')
 export class User {
+  constructor(entity: Partial<User>) {
+    Object.assign(this, entity);
+  }
+
   @PrimaryColumn()
   id: string;
 
@@ -11,12 +21,12 @@ export class User {
   @Column()
   password: string;
 
-  @Column()
+  @VersionColumn()
   version: number;
 
-  @Column()
+  @CreateDateColumn()
   createdAt: number;
 
-  @Column()
+  @CreateDateColumn()
   updatedAt: number;
 }

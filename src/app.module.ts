@@ -30,7 +30,8 @@ import { User } from './modules/users/user.entity';
       entities: [User],
       synchronize: false,
       migrationsTableName: process.env.POSTGRES_DB,
+      migrations: ['dist/migrations/**/*{.ts,.js}'],
     }),
   ],
 })
-export class AppModule {}
+export class AppModule { }
