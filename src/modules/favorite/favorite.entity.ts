@@ -1,16 +1,22 @@
-import { Column, Entity } from 'typeorm';
+import { Entity, JoinTable, ManyToMany, PrimaryColumn } from 'typeorm';
 import { Album } from '../album/album.entity';
 import { Artist } from '../artist/artist.entity';
 import { Track } from '../tracks/track.entity';
 
 @Entity('favorites')
 export class Favorites {
-  @Column()
+  @PrimaryColumn()
+  id: string;
+
+  @ManyToMany(() => Album, (album) => album, { cascade: true })
+  @JoinTable()
   albums: Album[];
 
-  @Column()
+  @ManyToMany(() => Artist, (artist) => artist, { cascade: true })
+  @JoinTable()
   artists: Artist[];
 
-  @Column()
+  @ManyToMany(() => Track, (track) => track, { cascade: true })
+  @JoinTable()
   tracks: Track[];
 }
