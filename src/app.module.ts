@@ -11,6 +11,7 @@ import { User } from './modules/users/user.entity';
 import { Track } from './modules/tracks/track.entity';
 import { Album } from './modules/album/album.entity';
 import { Artist } from './modules/artist/artist.entity';
+import { Favorites } from './modules/favorite/favorite.entity';
 
 @Module({
   imports: [
@@ -30,7 +31,7 @@ import { Artist } from './modules/artist/artist.entity';
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRESS_PASSWORD,
       database: process.env.POSTGRES_DB,
-      entities: [User, Track, Album, Artist],
+      entities: [User, Track, Album, Artist, Favorites],
       synchronize: false,
       migrationsTableName: process.env.POSTGRES_DB,
       migrations: ['dist/migrations/**/*{.ts,.js}'],

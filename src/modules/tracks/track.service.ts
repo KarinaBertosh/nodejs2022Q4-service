@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { DB } from 'src/database/db.service';
 import { TrackDto, UpdateTrackDto } from './dto/track.dto';
 import { EntityNotExist } from 'src/errors/errors';
-// import { Track } from 'src/utils/types';
 import { entities } from 'src/utils/entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Track } from './track.entity';

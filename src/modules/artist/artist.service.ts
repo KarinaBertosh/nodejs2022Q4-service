@@ -1,38 +1,49 @@
 import { Injectable } from '@nestjs/common';
-import { DB } from 'src/database/db.service';
 import { ArtistDto, UpdateArtistDto } from './dto/artist.dto';
 import { EntityNotExist } from 'src/errors/errors';
 import { entities } from 'src/utils/entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Artist } from './artist.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class ArtistService {
-  constructor(private db: DB) {}
+  constructor(
+    @InjectRepository(Artist)
+    private artistRepository: Repository<Artist>,) { }
 
-  findAll() {
-    return this.db.artist.findAll();
+  async findAll() {
+    return await this.artistRepository.find();
   }
 
-  findOne(id: string) {
-    const artist = this.db.artist.findOne(id);
-    if (!artist) throw new EntityNotExist(entities.artist);
+  async findOne(id: string, skipErrors = false) {
+    const artist = await this.artistRepository.findOne({ where: { id } });
+
+    if (!artist && !skipErrors) throw new EntityNotExist(entities.artist);
+    if (!artist && skipErrors) return null;
+
     return artist;
   }
 
-  create(dto: ArtistDto) {
-    const artist = this.db.artist.create(dto);
-    return artist;
+  async create(dto: ArtistDto) {
+    const newArtist = await this.artistRepository.create({
+      ...dto,
+    });
+    return await this.artistRepository.save(newArtist);
   }
 
-  update(id: string, dto: UpdateArtistDto) {
-    const artist = this.findOne(id);
+  async update(id: string, dto: UpdateArtistDto) {
+    const artist = await this.artistRepository.findOne({ where: { id } });
+
     if (!artist) throw new EntityNotExist(entities.artist);
-    artist.grammy = dto.grammy;
-    return this.db.artist.update(artist);
+
+    const updatedArtist = Object.assign(artist, dto);
+    return await this.artistRepository.save(updatedArtist);
   }
 
-  delete(id: string) {
-    const artist = this.findOne(id);
+  async delete(id: string) {
+    const artist = await this.artistRepository.findOne({ where: { id } });
     if (!artist) throw new EntityNotExist(entities.artist);
-    return this.db.artist.delete(artist);
+    await this.artistRepository.delete(id);
   }
 }
