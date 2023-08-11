@@ -15,7 +15,7 @@ import { entities } from 'src/utils/entity';
 
 @Controller(entities.track)
 export class TrackController {
-  constructor(private trackService: TrackService) {}
+  constructor(private trackService: TrackService) { }
   @Get()
   getAll() {
     return this.trackService.findAll();
@@ -27,6 +27,7 @@ export class TrackController {
   }
 
   @Post()
+  @HttpCode(201)
   create(@Body() createTrackDto: TrackDto) {
     return this.trackService.create(createTrackDto);
   }

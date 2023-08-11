@@ -5,29 +5,33 @@ import { entities } from 'src/utils/entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Track } from './track.entity';
 import { Repository } from 'typeorm';
+import { randomUUID } from 'crypto';
 
 @Injectable()
 export class TrackService {
   constructor(
     @InjectRepository(Track)
-    private readonly trackRepository: Repository<Track>) {}
+    @InjectRepository(Track)
+    private readonly trackRepository: Repository<Track>) { }
 
   async findAll() {
     return await this.trackRepository.find();
   }
 
-  async findOne(id: string, skipErrors = false) {
+  async findOne(id: string, errors = false) {
     const track = await this.trackRepository.findOne({ where: { id } });
 
-    if (!track && !skipErrors) throw new EntityNotExist(entities.track);
-    if (!track && skipErrors) return null;
+    if (!track && !errors) throw new EntityNotExist(entities.track);
+    if (!track && errors) return null;
 
     return track;
   }
 
   async create(createDto: TrackDto) {
-    const newTrack = await this.trackRepository.create({ ...createDto });
-    return await this.trackRepository.save(newTrack);
+    const newTrack = new Track({ ...createDto });
+    newTrack.id = randomUUID();
+    const createdTrack = await this.trackRepository.create(newTrack);
+    return await this.trackRepository.save(createdTrack);
   }
 
   async update(id: string, updateDto: UpdateTrackDto) {

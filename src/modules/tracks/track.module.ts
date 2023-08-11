@@ -9,4 +9,4 @@ import { TypeOrmModule } from '@nestjs/typeorm';
   providers: [TrackService],
   imports: [TypeOrmModule.forFeature([Track])],
 })
-export class TrackModule {}
+export class TrackModule { }
