@@ -27,6 +27,7 @@ export class AlbumController {
   }
 
   @Post()
+  @HttpCode(201)
   create(@Body() createDto: AlbumDto) {
     return this.albumService.create(createDto);
   }

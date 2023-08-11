@@ -3,38 +3,49 @@ import { DB } from 'src/database/db.service';
 import { AlbumDto, UpdateAlbumDto } from './dto/album.dto';
 import { EntityNotExist } from 'src/errors/errors';
 import { entities } from 'src/utils/entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Album } from './album.entity';
+import { Repository } from 'typeorm';
+import { randomUUID } from 'crypto';
 
 @Injectable()
 export class AlbumService {
-  constructor(private db: DB) {}
+  constructor(
+    @InjectRepository(Album)
+    private readonly albumRepository: Repository<Album>,
+  ) { }
 
-  findAll() {
-    return this.db.album.findAll();
+  async findAll() {
+    return await this.albumRepository.find();
   }
 
-  findOne(id: string) {
-    const album = this.db.album.findOne(id);
-    if (!album) throw new EntityNotExist(entities.album);
+  async findOne(id: string, errors = false) {
+    const album = await this.albumRepository.findOne({ where: { id } });
+
+    if (!album && !errors) throw new EntityNotExist(entities.album);
+    if (!album && errors) return null;
+
     return album;
   }
 
-  create(dto: AlbumDto) {
-    const album = this.db.album.create(dto);
-    if (!album) throw new EntityNotExist(entities.album);
-    return album;
+  async create(dto: AlbumDto) {
+    const newAlbum = new Album({ ...dto });
+    newAlbum.id = randomUUID();
+    const createdTrack = await this.albumRepository.create(newAlbum);
+    return await this.albumRepository.save(createdTrack);
   }
 
-  update(id: string, updateDto: UpdateAlbumDto) {
-    const album = this.findOne(id);
+  async update(id: string, updateDto: UpdateAlbumDto) {
+    const album = await this.albumRepository.findOne({ where: { id } });
     if (!album) throw new EntityNotExist(entities.album);
-    album.artistId = updateDto.artistId;
-    album.year = updateDto.year;
-    return this.db.album.update(album);
+
+    const updatedAlbum = Object.assign(album, updateDto);
+    return await this.albumRepository.save(updatedAlbum);
   }
 
-  delete(id: string) {
-    const album = this.findOne(id);
+  async delete(id: string) {
+    const album = await this.albumRepository.findOne({ where: { id } });
     if (!album) throw new EntityNotExist(entities.album);
-    return this.db.album.delete(album);
+    await this.albumRepository.delete(id);
   }
 }
