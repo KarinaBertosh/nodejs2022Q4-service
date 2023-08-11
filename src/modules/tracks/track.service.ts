@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject, forwardRef } from '@nestjs/common';
 import { TrackDto, UpdateTrackDto } from './dto/track.dto';
 import { EntityNotExist } from 'src/errors/errors';
 import { entities } from 'src/utils/entity';
@@ -6,13 +6,17 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Track } from './track.entity';
 import { Repository } from 'typeorm';
 import { randomUUID } from 'crypto';
+import { FavoriteService } from '../favorite/favorite.service';
 
 @Injectable()
 export class TrackService {
   constructor(
     @InjectRepository(Track)
-    @InjectRepository(Track)
-    private readonly trackRepository: Repository<Track>) { }
+    private readonly trackRepository: Repository<Track>,
+
+    @Inject(forwardRef(() => FavoriteService))
+    private readonly favoriteService: FavoriteService,
+  ) { }
 
   async findAll() {
     return await this.trackRepository.find();
