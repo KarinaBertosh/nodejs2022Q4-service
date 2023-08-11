@@ -4,6 +4,10 @@ import { Track } from '../tracks/track.entity';
 
 @Entity('artists')
 export class Artist {
+  constructor(entity: Partial<Artist>) {
+    Object.assign(this, entity);
+  }
+
   @PrimaryColumn()
   id: string;
 

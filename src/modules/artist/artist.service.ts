@@ -5,6 +5,7 @@ import { entities } from 'src/utils/entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Artist } from './artist.entity';
 import { Repository } from 'typeorm';
+import { randomUUID } from 'crypto';
 
 @Injectable()
 export class ArtistService {
@@ -26,10 +27,10 @@ export class ArtistService {
   }
 
   async create(dto: ArtistDto) {
-    const newArtist = await this.artistRepository.create({
-      ...dto,
-    });
-    return await this.artistRepository.save(newArtist);
+    const newArtist = new Artist({ ...dto });
+    newArtist.id = randomUUID();
+    const createdArtist = await this.artistRepository.create(newArtist);
+    return await this.artistRepository.save(createdArtist);
   }
 
   async update(id: string, dto: UpdateArtistDto) {
