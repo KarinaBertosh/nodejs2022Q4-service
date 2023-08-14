@@ -1,6 +1,6 @@
 import { Injectable, Inject, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityNotExist, EntityNotFound } from 'src/errors/errors';
+import { EntityNotContent, EntityNotExist, EntityNotFound } from 'src/errors/errors';
 import { entities } from 'src/utils/entity';
 import { Favorites } from './favorite.entity';
 import { Repository } from 'typeorm';
@@ -32,6 +32,15 @@ export class FavoriteService {
     @InjectRepository(Favorites)
     private readonly favoriteRepository: Repository<Favorites>,
 
+    @InjectRepository(Album)
+    private readonly albumRepository: Repository<Album>,
+
+    @InjectRepository(Artist)
+    private readonly artistRepository: Repository<Artist>,
+
+    @InjectRepository(Track)
+    private readonly trackRepository: Repository<Track>,
+
     @Inject(forwardRef(() => ArtistService))
     private readonly artistService: ArtistService,
 
@@ -43,9 +52,9 @@ export class FavoriteService {
   ) { }
 
   async findAll() {
-    const favArtists = await this.artistService.findAll();
-    const favAlbums = await this.albumService.findAll();
-    const favTracks = await this.trackService.findAll();
+    const favArtists = await this.artistRepository.find();
+    const favAlbums = await this.albumRepository.find();
+    const favTracks = await this.trackRepository.find();
     return {
       artists: favArtists.map((i) => returnResponse(i)),
       albums: favAlbums.map((i) => returnResponse(i)),
@@ -58,15 +67,15 @@ export class FavoriteService {
 
     switch (type) {
       case entities.artist:
-        const artist = await this.artistService.findOne(id);
+        const artist = await this.artistRepository.findOne({ where: { id } });
         if (!artist) throw new EntityNotFound(entities.artist);
         return returnResponse(artist);
       case entities.album:
-        const album = await this.albumService.findOne(id);
+        const album = await this.albumRepository.findOne({ where: { id } });
         if (!album) throw new EntityNotFound(entities.album);
         return returnResponse(album);
       case entities.track:
-        const track = await this.trackService.findOne(id);
+        const track = await this.trackRepository.findOne({ where: { id } });
         if (!track) throw new EntityNotFound(entities.track);
         return returnResponse(track);
     }
@@ -77,14 +86,17 @@ export class FavoriteService {
 
     switch (type) {
       case entities.artist:
-        await this.artistService.delete(id);
-        return undefined;
+        const artist = await this.artistRepository.findOne({ where: { id } });
+        if (!artist) throw new EntityNotContent(entities.artist);
+        await this.artistRepository.delete(id);
       case entities.album:
-        await this.albumService.delete(id);
-        return undefined;
+        const album = await this.albumRepository.findOne({ where: { id } });
+        if (!album) throw new EntityNotContent(entities.album);
+        await this.albumRepository.delete(id);
       case entities.track:
-        await this.trackService.delete(id);
-        return undefined;
+        const track = await this.trackRepository.findOne({ where: { id } });
+        if (!track) throw new EntityNotContent(entities.track);
+        await this.trackRepository.delete(id);
     }
   }
 }

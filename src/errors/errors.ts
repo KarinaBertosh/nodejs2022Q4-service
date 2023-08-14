@@ -6,6 +6,12 @@ export class EntityNotExist extends HttpException {
   }
 }
 
+export class EntityNotContent extends HttpException {
+  constructor(type: string) {
+    super(`${type} not exists`, 204);
+  }
+}
+
 export class PasswordNotRight extends HttpException {
   constructor() {
     super('Password not right', 403);
