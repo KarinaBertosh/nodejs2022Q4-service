@@ -6,7 +6,7 @@ import {
   CreateDateColumn,
 } from 'typeorm';
 
-@Entity('user')
+@Entity('users')
 export class User {
   constructor(entity: Partial<User>) {
     Object.assign(this, entity);

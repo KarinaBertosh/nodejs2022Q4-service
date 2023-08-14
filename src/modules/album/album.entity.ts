@@ -8,7 +8,7 @@ import {
 import { Track } from '../tracks/track.entity';
 import { Artist } from '../artist/artist.entity';
 
-@Entity('album')
+@Entity('albums')
 export class Album {
   constructor(entity: Partial<Album>) {
     Object.assign(this, entity);
