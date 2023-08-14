@@ -10,8 +10,8 @@ import {
 } from '@nestjs/common';
 import { TrackService } from './track.service';
 import { TrackDto, UpdateTrackDto } from './dto/track.dto';
-import { UUID } from 'src/database/uuid.dto';
 import { entities } from 'src/utils/entity';
+import { UUID } from 'src/utils/uuid';
 
 @Controller(entities.track)
 export class TrackController {

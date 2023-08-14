@@ -8,10 +8,10 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { UUID } from 'src/database/uuid.dto';
 import { ArtistService } from './artist.service';
 import { ArtistDto, UpdateArtistDto } from './dto/artist.dto';
 import { entities } from 'src/utils/entity';
+import { UUID } from 'src/utils/uuid';
 
 @Controller(entities.artist)
 export class ArtistController {

@@ -30,11 +30,11 @@ export class ArtistService {
     return await this.artistRepository.find();
   }
 
-  async findOne(id: string, errors = false) {
+  async findOne(id: string) {
     const artist = await this.artistRepository.findOne({ where: { id } });
 
-    if (!artist && !errors) throw new EntityNotExist(entities.artist);
-    if (!artist && errors) return null;
+    if (!artist) throw new EntityNotExist(entities.artist);
+    // if (!artist && errors) return null;
 
     return artist;
   }

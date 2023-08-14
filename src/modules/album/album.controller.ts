@@ -8,10 +8,10 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { UUID } from 'src/database/uuid.dto';
 import { AlbumService } from './album.service';
 import { AlbumDto, UpdateAlbumDto } from './dto/album.dto';
 import { entities } from 'src/utils/entity';
+import { UUID } from 'src/utils/uuid';
 
 @Controller(entities.album)
 export class AlbumController {

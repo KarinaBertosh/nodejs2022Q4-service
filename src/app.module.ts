@@ -1,17 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { DbModule } from './database/db.module';
 import { UserModule } from './modules/users/user.module';
 import { TrackModule } from './modules/tracks/track.module';
 import { ArtistModule } from './modules/artist/artist.module';
 import { AlbumModule } from './modules/album/album.module';
 import { FavoriteModule } from './modules/favorite/favorite.module';
-import { User } from './modules/users/user.entity';
-import { Track } from './modules/tracks/track.entity';
-import { Album } from './modules/album/album.entity';
-import { Artist } from './modules/artist/artist.entity';
-import { Favorites } from './modules/favorite/favorite.entity';
 
 @Module({
   imports: [
@@ -23,7 +17,6 @@ import { Favorites } from './modules/favorite/favorite.entity';
     ArtistModule,
     AlbumModule,
     FavoriteModule,
-    DbModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.POSTGRES_HOST,
