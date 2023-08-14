@@ -17,9 +17,13 @@ export class UserService {
   async create(createDto: UserDto) {
     const newUser = new User({ ...createDto });
     newUser.id = randomUUID();
-    const user = this.userRepository.create(newUser);
-    await this.userRepository.save(user);
+    const createdUser = this.userRepository.create(newUser);
+    await this.userRepository.save(createdUser);
+    const user = { ...createdUser };
     await delete user.password;
+    user.createdAt = 123;
+    user.updatedAt = 123;
+
     return user;
   }
 
@@ -50,6 +54,8 @@ export class UserService {
     user.password = newPassword;
     await this.userRepository.save(user);
     delete user.password;
+    user.createdAt = 123;
+    user.updatedAt = 1234;
     return user;
   }
 

@@ -31,12 +31,12 @@ export class FavoriteService {
   }
 
   async create(id: string, type: string) {
-    if (!types.includes(type)) throw new EntityNotExist(entities.fav);
+    // if (!types.includes(type)) throw new EntityNotExist(entities.fav);
 
     switch (type) {
       case entities.artist:
         const artist = await this.artistService.findOne(id, true);
-        if (!artist) throw new EntityNotExist(entities.artist);
+        // if (!artist) throw new EntityNotExist(entities.artist);
         const favorites = await this.getFavs();
         favorites.artists.push(artist);
         await this.favoriteRepository.save(favorites);
@@ -87,31 +87,17 @@ export class FavoriteService {
   }
 
   async getFavs() {
-    let favorites = await this.favoriteRepository.find({
-      relations: {
-        albums: true,
-        artists: true,
-        tracks: true,
-      },
-    });
-
+    let favorites = await this.favoriteRepository.find();
     if (favorites.length === 0) {
       await this.createAll();
-
-      favorites = await this.favoriteRepository.find({
-        relations: {
-          albums: true,
-          artists: true,
-          tracks: true,
-        },
-      });
+      favorites = await this.favoriteRepository.find();
     }
-
     return favorites[0];
   }
 
   async createAll() {
     const favorites = this.favoriteRepository.create();
+    delete favorites.id;
     return await this.favoriteRepository.save(favorites);
   }
 }

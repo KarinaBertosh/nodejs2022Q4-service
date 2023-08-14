@@ -1,9 +1,11 @@
+import { Transform } from 'class-transformer';
 import {
   Column,
   Entity,
   PrimaryColumn,
   VersionColumn,
   CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity('users')
@@ -25,8 +27,10 @@ export class User {
   version: number;
 
   @CreateDateColumn()
+  @Transform(({ value }) => new Date(value).getTime())
   createdAt: number;
 
-  @CreateDateColumn()
+  @UpdateDateColumn()
+  @Transform(({ value }) => new Date(value).getTime())
   updatedAt: number;
 }
