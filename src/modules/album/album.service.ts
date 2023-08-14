@@ -26,11 +26,11 @@ export class AlbumService {
     return await this.albumRepository.find();
   }
 
-  async findOne(id: string, errors = false) {
+  async findOne(id: string) {
     const album = await this.albumRepository.findOne({ where: { id } });
 
-    if (!album && !errors) throw new EntityNotExist(entities.album);
-    if (!album && errors) return null;
+    if (!album) throw new EntityNotExist(entities.album);
+    // if (!album && errors) return null;
 
     return album;
   }

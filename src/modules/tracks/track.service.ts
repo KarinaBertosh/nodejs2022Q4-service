@@ -22,11 +22,11 @@ export class TrackService {
     return await this.trackRepository.find();
   }
 
-  async findOne(id: string, errors = false) {
+  async findOne(id: string) {
     const track = await this.trackRepository.findOne({ where: { id } });
 
-    if (!track && !errors) throw new EntityNotExist(entities.track);
-    if (!track && errors) return null;
+    if (!track) throw new EntityNotExist(entities.track);
+    // if (!track && errors) return null;
 
     return track;
   }

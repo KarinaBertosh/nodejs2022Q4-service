@@ -1,14 +1,30 @@
 import { Injectable, Inject, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityNotExist } from 'src/errors/errors';
+import { EntityNotExist, EntityNotFound } from 'src/errors/errors';
 import { entities } from 'src/utils/entity';
 import { Favorites } from './favorite.entity';
 import { Repository } from 'typeorm';
 import { ArtistService } from '../artist/artist.service';
 import { AlbumService } from '../album/album.service';
 import { TrackService } from '../tracks/track.service';
+import { Artist } from '../artist/artist.entity';
+import { Track } from '../tracks/track.entity';
+import { Album } from '../album/album.entity';
 
 const types = [entities.track, entities.album, entities.artist];
+
+const returnResponse = (entity: Artist | Track | Album) => {
+  if (entity instanceof Artist) {
+    const { grammy, name, id } = entity;
+    return { grammy, name, id };
+  } else if (entity instanceof Track) {
+    const { artistId, id, name, albumId, duration } = entity;
+    return { artistId, id, name, albumId, duration };
+  } else if (entity instanceof Album) {
+    const { artistId, id, name, year } = entity;
+    return { artistId, id, name, year };
+  }
+};
 
 @Injectable()
 export class FavoriteService {
@@ -26,27 +42,15 @@ export class FavoriteService {
     private readonly trackService: TrackService,
   ) { }
 
-  private favorites = {
-    artists: new Set<string>(),
-    albums: new Set<string>(),
-    tracks: new Set<string>(),
-  };
-
   async findAll() {
-    const artists = Array.from(this.favorites.artists).map(async (id) => {
-      const artist = await this.artistService.findOne(id);
-      return artist;
-    });
-    const albums = Array.from(this.favorites.albums).map(async (id) => {
-      const album = await this.albumService.findOne(id);
-      return album;
-    });
-    const tracks = Array.from(this.favorites.tracks).map(async (id) => {
-      const track = await this.trackService.findOne(id);
-      return track;
-    });
-
-    return { artists, albums, tracks };
+    const favArtists = await this.artistService.findAll();
+    const favAlbums = await this.albumService.findAll();
+    const favTracks = await this.trackService.findAll();
+    return {
+      artists: favArtists.map((i) => returnResponse(i)),
+      albums: favAlbums.map((i) => returnResponse(i)),
+      tracks: favTracks.map((i) => returnResponse(i)),
+    };
   }
 
   async create(id: string, type: string) {
@@ -55,16 +59,16 @@ export class FavoriteService {
     switch (type) {
       case entities.artist:
         const artist = await this.artistService.findOne(id);
-        artist && this.favorites.artists.add(id);
-        break;
+        if (!artist) throw new EntityNotFound(entities.artist);
+        return returnResponse(artist);
       case entities.album:
         const album = await this.albumService.findOne(id);
-        album && this.favorites.albums.add(id);
-        break;
+        if (!album) throw new EntityNotFound(entities.album);
+        return returnResponse(album);
       case entities.track:
         const track = await this.trackService.findOne(id);
-        track && this.favorites.tracks.add(id);
-        break;
+        if (!track) throw new EntityNotFound(entities.track);
+        return returnResponse(track);
     }
   }
 
@@ -73,14 +77,14 @@ export class FavoriteService {
 
     switch (type) {
       case entities.artist:
-        this.favorites.artists.delete(id);
-        break;
+        await this.artistService.delete(id);
+        return undefined;
       case entities.album:
-        this.favorites.albums.delete(id);
-        break;
+        await this.albumService.delete(id);
+        return undefined;
       case entities.track:
-        this.favorites.tracks.delete(id);
-        break;
+        await this.trackService.delete(id);
+        return undefined;
     }
   }
 }

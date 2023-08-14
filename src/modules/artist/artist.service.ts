@@ -32,10 +32,7 @@ export class ArtistService {
 
   async findOne(id: string) {
     const artist = await this.artistRepository.findOne({ where: { id } });
-
     if (!artist) throw new EntityNotExist(entities.artist);
-    // if (!artist && errors) return null;
-
     return artist;
   }
 

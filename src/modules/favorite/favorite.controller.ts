@@ -5,7 +5,7 @@ import { UUID } from 'src/utils/uuid';
 
 @Controller(entities.favs)
 export class FavoriteController {
-  constructor(private favService: FavoriteService) {}
+  constructor(private favService: FavoriteService) { }
   @Get()
   getAll() {
     return this.favService.findAll();
