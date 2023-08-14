@@ -24,10 +24,7 @@ export class TrackService {
 
   async findOne(id: string) {
     const track = await this.trackRepository.findOne({ where: { id } });
-
     if (!track) throw new EntityNotExist(entities.track);
-    // if (!track && errors) return null;
-
     return track;
   }
 

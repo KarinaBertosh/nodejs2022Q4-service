@@ -1,6 +1,6 @@
 import { Injectable, Inject, forwardRef } from '@nestjs/common';
 import { ArtistDto, UpdateArtistDto } from './dto/artist.dto';
-import { EntityNotExist } from 'src/errors/errors';
+import { EntityNotContent, EntityNotExist } from 'src/errors/errors';
 import { entities } from 'src/utils/entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Artist } from './artist.entity';
@@ -9,12 +9,20 @@ import { randomUUID } from 'crypto';
 import { TrackService } from '../tracks/track.service';
 import { AlbumService } from '../album/album.service';
 import { FavoriteService } from '../favorite/favorite.service';
+import { Track } from '../tracks/track.entity';
+import { Album } from '../album/album.entity';
 
 @Injectable()
 export class ArtistService {
   constructor(
     @InjectRepository(Artist)
     private readonly artistRepository: Repository<Artist>,
+
+    @InjectRepository(Track)
+    private readonly trackRepository: Repository<Track>,
+
+    @InjectRepository(Album)
+    private readonly albumRepository: Repository<Album>,
 
     @Inject(forwardRef(() => FavoriteService))
     private readonly favoriteService: FavoriteService,
@@ -50,6 +58,16 @@ export class ArtistService {
 
     const updatedArtist = Object.assign(artist, dto);
     return await this.artistRepository.save(updatedArtist);
+  }
+
+  async updateFav(id: string) {
+    const track = await this.trackRepository.findOneBy({ id });
+    if (!track) throw new EntityNotContent(entities.track);
+    const album = await this.albumRepository.findOneBy({ id });
+    if (!album) throw new EntityNotContent(entities.album);
+
+    track.artistId = null;
+    album.artistId = null;
   }
 
   async delete(id: string) {

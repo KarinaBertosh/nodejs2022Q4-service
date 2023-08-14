@@ -86,17 +86,19 @@ export class FavoriteService {
 
     switch (type) {
       case entities.artist:
-        const artist = await this.artistRepository.findOne({ where: { id } });
-        if (!artist) throw new EntityNotContent(entities.artist);
-        await this.artistRepository.delete(id);
+        const artist = await this.artistRepository.findOneBy({ id });
+        if (!artist) throw new EntityNotExist(type);
+        await this.artistService.updateFav(id);
+        return undefined;
       case entities.album:
-        const album = await this.albumRepository.findOne({ where: { id } });
-        if (!album) throw new EntityNotContent(entities.album);
-        await this.albumRepository.delete(id);
+        const album = await this.albumRepository.findOneBy({ id });
+        if (!album) throw new EntityNotExist(type);
+        await this.albumService.updateFav(id);
+        return undefined;
       case entities.track:
-        const track = await this.trackRepository.findOne({ where: { id } });
-        if (!track) throw new EntityNotContent(entities.track);
-        await this.trackRepository.delete(id);
+        const track = await this.trackRepository.findOneBy({ id });
+        if (!track) throw new EntityNotExist(type);
+        return undefined;
     }
   }
 }
