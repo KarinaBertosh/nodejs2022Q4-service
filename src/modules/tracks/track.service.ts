@@ -1,6 +1,6 @@
 import { Injectable, Inject, forwardRef } from '@nestjs/common';
 import { TrackDto, UpdateTrackDto } from './dto/track.dto';
-import { EntityNotExist } from 'src/errors/errors';
+import { EntityNotContent, EntityNotExist } from 'src/errors/errors';
 import { entities } from 'src/utils/entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Track } from './track.entity';
@@ -42,6 +42,11 @@ export class TrackService {
     const updatedTrack = Object.assign(track, updateDto);
 
     return await this.trackRepository.save(updatedTrack);
+  }
+
+  async updateFav(id: string) {
+    const track = await this.trackRepository.findOneBy({ id });
+    if (!track) throw new EntityNotContent(entities.artist);
   }
 
   async delete(id: string) {

@@ -61,9 +61,14 @@ export class ArtistService {
   }
 
   async updateFav(id: string) {
-    const track = await this.trackRepository.findOneBy({ id });
+    const artist = await this.artistRepository.findOneBy({ id });
+    if (!artist) throw new EntityNotContent(entities.artist);
+
+    const tracks = await this.trackRepository.find();
+    const albums = await this.albumRepository.find();
+    const track = tracks.find((t) => t.artistId === artist.id);
+    const album = albums.find((a) => a.artistId === artist.id);
     if (!track) throw new EntityNotContent(entities.track);
-    const album = await this.albumRepository.findOneBy({ id });
     if (!album) throw new EntityNotContent(entities.album);
 
     track.artistId = null;

@@ -52,7 +52,11 @@ export class AlbumService {
   }
 
   async updateFav(id: string) {
-    const track = await this.trackRepository.findOneBy({ id });
+    const album = await this.albumRepository.findOneBy({ id });
+    if (!album) throw new EntityNotContent(entities.album);
+
+    const tracks = await this.trackRepository.find();
+    const track = tracks.find((t) => t.albumId === album.id);
     if (!track) throw new EntityNotContent(entities.track);
     track.albumId = null;
   }

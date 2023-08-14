@@ -1,6 +1,6 @@
 import { Injectable, Inject, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityNotContent, EntityNotExist, EntityNotFound } from 'src/errors/errors';
+import { EntityNotExist, EntityNotFound } from 'src/errors/errors';
 import { entities } from 'src/utils/entity';
 import { Favorites } from './favorite.entity';
 import { Repository } from 'typeorm';
@@ -10,6 +10,7 @@ import { TrackService } from '../tracks/track.service';
 import { Artist } from '../artist/artist.entity';
 import { Track } from '../tracks/track.entity';
 import { Album } from '../album/album.entity';
+import { randomUUID } from 'crypto';
 
 const types = [entities.track, entities.album, entities.artist];
 
@@ -56,6 +57,7 @@ export class FavoriteService {
     const favAlbums = await this.albumRepository.find();
     const favTracks = await this.trackRepository.find();
     return {
+      id: randomUUID(),
       artists: favArtists.map((i) => returnResponse(i)),
       albums: favAlbums.map((i) => returnResponse(i)),
       tracks: favTracks.map((i) => returnResponse(i)),
@@ -83,22 +85,27 @@ export class FavoriteService {
 
   async delete(id: string, type: string) {
     if (!types.includes(type)) throw new EntityNotExist(entities.fav);
+    const fav = await this.findAll();
 
     switch (type) {
       case entities.artist:
-        const artist = await this.artistRepository.findOneBy({ id });
-        if (!artist) throw new EntityNotExist(type);
+        const artist = fav.artists.find((a) => a.id === id);
+        const indexArt = fav.artists.indexOf(artist);
         await this.artistService.updateFav(id);
+        await this.favoriteRepository.update(fav.artists[indexArt], undefined);
         return undefined;
       case entities.album:
-        const album = await this.albumRepository.findOneBy({ id });
-        if (!album) throw new EntityNotExist(type);
+        const album = fav.albums.find((a) => a.id === id);
+        const index = fav.albums.indexOf(album);
         await this.albumService.updateFav(id);
+        await this.favoriteRepository.update(fav.albums[index], undefined);
         return undefined;
       case entities.track:
-        const track = await this.trackRepository.findOneBy({ id });
-        if (!track) throw new EntityNotExist(type);
+        const track = fav.tracks.find((a) => a.id === id);
+        const indexTr = fav.tracks.indexOf(track);
+        await this.trackService.updateFav(id);
+        await this.favoriteRepository.update(fav.tracks[indexTr], undefined);
         return undefined;
     }
   }
-}
+};
