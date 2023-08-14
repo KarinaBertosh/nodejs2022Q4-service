@@ -1,14 +1,14 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryColumn } from 'typeorm';
 import { Album } from '../album/album.entity';
 import { Artist } from '../artist/artist.entity';
 
-@Entity('tracks')
+@Entity('track')
 export class Track {
   constructor(entity: Partial<Track>) {
     Object.assign(this, entity);
   }
 
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn()
   id: string;
 
   @Column()

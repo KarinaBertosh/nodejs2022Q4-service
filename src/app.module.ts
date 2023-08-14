@@ -31,10 +31,9 @@ import { Favorites } from './modules/favorite/favorite.entity';
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRESS_PASSWORD,
       database: process.env.POSTGRES_DB,
-      entities: [User, Track, Album, Artist, Favorites],
-      synchronize: false,
-      migrationsTableName: process.env.POSTGRES_DB,
-      migrations: ['dist/migrations/**/*{.ts,.js}'],
+      entities: [],
+      synchronize: true,
+      autoLoadEntities: true,
     }),
   ],
 })

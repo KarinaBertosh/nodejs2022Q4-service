@@ -2,7 +2,7 @@ import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 import { Album } from '../album/album.entity';
 import { Track } from '../tracks/track.entity';
 
-@Entity('artists')
+@Entity('artist')
 export class Artist {
   constructor(entity: Partial<Artist>) {
     Object.assign(this, entity);

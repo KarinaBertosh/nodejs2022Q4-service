@@ -3,18 +3,18 @@ import {
   Entity,
   ManyToOne,
   OneToMany,
-  PrimaryGeneratedColumn,
+  PrimaryColumn,
 } from 'typeorm';
 import { Track } from '../tracks/track.entity';
 import { Artist } from '../artist/artist.entity';
 
-@Entity('albums')
+@Entity('album')
 export class Album {
   constructor(entity: Partial<Album>) {
     Object.assign(this, entity);
   }
 
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn()
   id: string;
 
   @Column()
