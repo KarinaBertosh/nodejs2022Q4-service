@@ -92,19 +92,19 @@ export class FavoriteService {
         const artist = fav.artists.find((a) => a.id === id);
         const indexArt = fav.artists.indexOf(artist);
         await this.artistService.updateFav(id);
-        await this.favoriteRepository.update(fav.artists[indexArt], undefined);
+        // await this.favoriteRepository.update(fav.artists[indexArt], undefined);
         return undefined;
       case entities.album:
         const album = fav.albums.find((a) => a.id === id);
         const index = fav.albums.indexOf(album);
         await this.albumService.updateFav(id);
-        await this.favoriteRepository.update(fav.albums[index], undefined);
+        // await this.favoriteRepository.update(fav.albums[index], undefined);
         return undefined;
       case entities.track:
         const track = fav.tracks.find((a) => a.id === id);
         const indexTr = fav.tracks.indexOf(track);
         await this.trackService.updateFav(id);
-        await this.favoriteRepository.update(fav.tracks[indexTr], undefined);
+        // await this.favoriteRepository.update(fav.tracks[indexTr], undefined);
         return undefined;
     }
   }
