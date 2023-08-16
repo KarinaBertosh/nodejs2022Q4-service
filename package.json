@@ -26,7 +26,10 @@
     "migration:revert": "npm run typeorm -- -d ./src/config/typeorm.ts migration:revert",
     "start:all": "npm run build && npm run migration:run && npm run start:dev",
     "docker:up": "docker compose up",
-    "docker:scout": "docker scout cves postgres:12/scout-demo:v1 & docker scout cves nodejs2022q4-service-main:latest/scout-demo:v1"
+    "docker:scout": "docker scout cves postgres:12/scout-demo:v1 & docker scout cves nodejs2022q4-service-main:latest/scout-demo:v1",
+    "docker:pushed-image": "docker run --name postgres:12 -p 19593:19593 -e POSTGRES_PASSWORD=karina2002 -d postgres",
+    "docker:check-image": "docker ps",
+    "docker:stop": "docker stop"
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",
