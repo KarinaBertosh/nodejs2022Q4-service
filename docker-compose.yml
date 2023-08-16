@@ -1,0 +1,38 @@
+version: '3.0'
+
+services:
+  main:
+    container_name: main
+    build:
+      context: .
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+      - /app/node_modules
+    ports:
+      - 4000:4000
+      - 9229:9229
+    command: npm run start:all
+    depends_on:
+      - postgres
+    restart: always
+  postgres:
+    container_name: hls
+    image: postgres:12
+    env_file:
+      - .env
+    environment:
+      PG_DATA: /var/lib/postgresql/data
+      POSTGRES_PORT: 19593:19593
+      POSTGRES_USER: karina
+      POSTGRES_PASSWORD: karina2002
+      POSTGRES_DB: hls
+    ports:
+      - 19593:19593
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: always
+
+volumes:
+  pgdata:
