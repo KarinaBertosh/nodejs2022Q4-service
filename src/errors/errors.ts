@@ -29,3 +29,9 @@ export class EntityNotCreate extends HttpException {
     super(`${type} not create`, 400);
   }
 }
+
+export class EntityAlreadyExists extends HttpException {
+  constructor(type: string) {
+    super(`${type} already exists`, 400);
+  }
+}

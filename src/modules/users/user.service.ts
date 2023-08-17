@@ -6,6 +6,7 @@ import { UpdatePasswordDto, UserDto } from './dto/user.dto';
 import { randomUUID } from 'crypto';
 import { EntityNotExist, PasswordNotRight } from 'src/errors/errors';
 import { entities } from 'src/utils/entity';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -17,10 +18,13 @@ export class UserService {
   async create(createDto: UserDto) {
     const newUser = new User({ ...createDto });
     newUser.id = randomUUID();
+
     const createdUser = this.userRepository.create(newUser);
+
     await this.userRepository.save(createdUser);
     const user = { ...createdUser };
     await delete user.password;
+
     user.createdAt = 123;
     user.updatedAt = 123;
 
@@ -29,6 +33,13 @@ export class UserService {
 
   async findAll() {
     return await this.userRepository.find();
+  }
+
+  async getUserByLogin(login: string) {
+    const user = await this.userRepository.findOne({
+      where: { login },
+    });
+    return user;
   }
 
   async findOne(id: string) {
