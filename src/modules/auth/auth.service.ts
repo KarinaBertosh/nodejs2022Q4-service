@@ -4,6 +4,8 @@ import * as bcrypt from 'bcryptjs';
 import { UserService } from '../users/user.service';
 import { UserDto } from '../users/dto/user.dto';
 import { User } from '../users/user.entity';
+import { Unauthorized } from 'src/errors/errors';
+import { entities } from 'src/utils/entity';
 
 @Injectable()
 export class AuthService {
@@ -13,13 +15,23 @@ export class AuthService {
 
   async login(userDto: User) {
     const user = await this.userService.findOne(userDto.id);
-    if (user?.password !== userDto.password) {
-      throw new UnauthorizedException();
+    if (userDto.login !== user.login || userDto.password !== user.password) {
+      throw new Unauthorized(entities.user);
     }
-    const payload = { sub: user.id, login: user.login };
-    return {
-      access_token: await this.jwtService.signAsync(payload),
-    };
+    const { login, id: userId } = userDto;
+    const payload = { userId, login };
+
+    const accessToken = await this.jwtService.signAsync(payload, {
+      secret: process.env.JWT_SECRET_KEY,
+      expiresIn: process.env.JWT_EXPIRE_TIME,
+    });
+
+    const refreshToken = await this.jwtService.signAsync(payload, {
+      secret: process.env.JWT_SECRET_REFRESH_KEY,
+      expiresIn: process.env.JWT_REFRESH_EXPIRE_TIME,
+    });
+
+    return { accessToken, refreshToken };
   }
 
   async signUp(userDto: UserDto) {
@@ -33,14 +45,10 @@ export class AuthService {
     };
   }
 
-  private async validateUser(userDto: UserDto) {
-    const user = await this.userService.getUserByLogin(userDto.login);
-    const passwordEquals = await bcrypt.compare(
-      userDto.password,
-      user.password,
-    );
+  async validateUser(login: string, password: string) {
+    const user = await this.userService.getUserByLogin(login);
+    const passwordEquals = await bcrypt.compare(password, user.password);
     if (user && passwordEquals) return user;
-
     throw new UnauthorizedException({ message: 'Incorrect email or password' });
   }
 }
