@@ -8,10 +8,12 @@ import { AlbumModule } from './modules/album/album.module';
 import { FavoriteModule } from './modules/favorite/favorite.module';
 import typeorm from './config/typeorm';
 import { APP_GUARD } from '@nestjs/core';
-import { JwtAuthGuard } from './modules/auth/jwt-auth.guard';
+import { AuthGuard } from './modules/auth/auth.guard';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
+    JwtModule,
     UserModule,
     TrackModule,
     ArtistModule,
@@ -30,7 +32,7 @@ import { JwtAuthGuard } from './modules/auth/jwt-auth.guard';
   providers: [
     {
       provide: APP_GUARD,
-      useClass: JwtAuthGuard,
+      useClass: AuthGuard,
     },
   ],
 })

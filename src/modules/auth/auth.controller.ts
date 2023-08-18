@@ -1,25 +1,19 @@
 import { Body, Controller, HttpCode, Post, Request, UseGuards } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { UserDto } from '../users/dto/user.dto';
-import { Public } from './jwt-auth.guard';
 import { AuthGuard } from '@nestjs/passport';
-// import { AuthGuard } from './auth.guard';
 
-@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) { }
 
-  @Public()
   @HttpCode(200)
   @UseGuards(AuthGuard('jwt'))
   @Post('login')
-  async login(@Request() req) {
-    return await this.authService.login(req.user);
+  async login(@Body() userDto: Record<string, any>) {
+    return await this.authService.login(userDto);
   }
 
-  @Public()
   @HttpCode(201)
   @Post('signup')
   async signup(@Body() userDto: UserDto) {
