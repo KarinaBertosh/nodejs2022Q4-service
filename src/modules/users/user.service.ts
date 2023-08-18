@@ -16,6 +16,10 @@ export class UserService {
   ) { }
 
   async create(createDto: UserDto) {
+    const { password } = createDto;
+    const salt = await bcrypt.genSalt(+process.env.SALT);
+    createDto.password = await bcrypt.hash(password, salt);
+
     const newUser = new User({ ...createDto });
     newUser.id = randomUUID();
 
