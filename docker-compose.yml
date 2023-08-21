@@ -18,18 +18,18 @@ services:
       - postgres
     restart: always
   postgres:
-    container_name: hls
+    container_name: hlsp2
     image: postgres:12
     env_file:
       - .env
     environment:
       PG_DATA: /var/lib/postgresql/data
-      POSTGRES_PORT: 19593:19593
+      POSTGRES_PORT: 16417:16417
       POSTGRES_USER: karina
       POSTGRES_PASSWORD: karina2002
-      POSTGRES_DB: hls
+      POSTGRES_DB: hls2
     ports:
-      - 19593:19593
+      - 16417:16417
     volumes:
       - pgdata:/var/lib/postgresql/data
     restart: always
