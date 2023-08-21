@@ -31,6 +31,9 @@ For more information about OpenAPI/Swagger please visit https://swagger.io/.
 ## Running application (using Docker)
 
 ```
+npm run docker:build
+```
+```
 npm run docker:up
 ```
 
