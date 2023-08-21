@@ -12,8 +12,8 @@ export class AuthService {
     private jwtService: JwtService) { }
 
   async login(user: any) {
-    const { login, id: userId } = user;
-    const payload = { userId, login };
+    const { login, id } = user;
+    const payload = { id, login };
 
     const accessToken = await this.jwtService.signAsync(payload, {
       secret: process.env.JWT_SECRET_KEY,
@@ -25,6 +25,8 @@ export class AuthService {
       expiresIn: process.env.TOKEN_REFRESH_EXPIRE_TIME,
     });
 
+    console.log(3, { accessToken, refreshToken });
+
     return { accessToken, refreshToken };
   }
 
@@ -32,17 +34,7 @@ export class AuthService {
     return await this.userService.create(userDto);
   }
 
-  private async generateToken(user: User) {
-    const payload = { login: user.login, password: user.password };
-    return {
-      token: this.jwtService.sign(payload),
-    };
-  }
-
-  async validateUser(login: string, password: string) {
-    const user = await this.userService.getUserByLogin(login);
-    const passwordEquals = await bcrypt.compare(password, user.password);
-    if (user && passwordEquals) return user;
-    throw new UnauthorizedException({ message: 'Incorrect email or password' });
+  async refresh(user: any) {
+    console.log('refresh');
   }
 }

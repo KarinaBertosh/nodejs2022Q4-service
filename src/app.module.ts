@@ -10,6 +10,7 @@ import typeorm from './config/typeorm';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './modules/auth/auth.guard';
 import { JwtModule } from '@nestjs/jwt';
+import { MyLogger } from './logger/LoggerService';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { JwtModule } from '@nestjs/jwt';
     ArtistModule,
     AlbumModule,
     FavoriteModule,
+    MyLogger,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [typeorm],
