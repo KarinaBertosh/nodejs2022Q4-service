@@ -2,26 +2,26 @@ import { ConsoleLogger, LogLevel } from '@nestjs/common';
 
 export class MyLogger extends ConsoleLogger {
   error(message: any) {
-    console.log(this.customMessage(message, 'error'));
+    this.customMessage(message, 'error');
   }
 
   log(message: any) {
-    console.log(this.customMessage(message, 'log'));
+    this.customMessage(message, 'log');
   }
 
   warn(message: any) {
-    console.log(this.customMessage(message, 'warn'));
+    this.customMessage(message, 'warn');
   }
 
   debug(message: any) {
-    console.log(this.customMessage(message, 'debug'));
+    this.customMessage(message, 'debug');
   }
 
   verbose(message: any) {
-    console.log(this.customMessage(message, 'verbose'));
+    this.customMessage(message, 'verbose');
   }
 
   private customMessage(message: string, logLevel: LogLevel) {
-    return `${logLevel}: ` + message;
+    console.log(`${logLevel}: ` + message);
   }
 }
