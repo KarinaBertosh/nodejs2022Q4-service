@@ -11,7 +11,15 @@ async function bootstrap() {
   });
   const logger = app.get(MyLogger);
   app.useLogger(logger);
-  
+
+  process.on('uncaughtException', (err, origin) => {
+    logger.error(`Caught exception: ${err}\n` + `origin: ${origin}`);
+  });
+
+  process.on('unhandledRejection', (reason, promise) => {
+    logger.debug(`Unhandled rejection: ${promise}\n` + `reason: ${reason}`);
+  });
+
   app.useGlobalPipes(new ValidationPipe());
   await app.listen(PORT);
 }
