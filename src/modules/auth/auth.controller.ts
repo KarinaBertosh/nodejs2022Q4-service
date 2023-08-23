@@ -15,7 +15,7 @@ import { AuthGuard } from '@nestjs/passport';
 export class AuthController {
   constructor(private authService: AuthService) { }
 
-  // @Public()
+  @Public()
   @Post('login')
   @HttpCode(200)
   async login(@Body() userDto: UserDto) {
