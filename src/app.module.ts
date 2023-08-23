@@ -12,6 +12,8 @@ import { AuthGuard } from './modules/auth/auth.guard';
 import { JwtModule } from '@nestjs/jwt';
 import { MyLogger } from './logger/LoggerService';
 import { AllExceptionsFilter } from './errors/AllExceptionsFilter';
+import { AuthModule } from './modules/auth/auth.module';
+import { AuthService } from './modules/auth/auth.service';
 
 @Module({
   imports: [
@@ -21,6 +23,7 @@ import { AllExceptionsFilter } from './errors/AllExceptionsFilter';
     ArtistModule,
     AlbumModule,
     FavoriteModule,
+    AuthModule,
     MyLogger,
     ConfigModule.forRoot({
       isGlobal: true,
@@ -34,6 +37,7 @@ import { AllExceptionsFilter } from './errors/AllExceptionsFilter';
   ],
   providers: [
     MyLogger,
+    AuthService,
     {
       provide: APP_GUARD,
       useClass: AuthGuard,

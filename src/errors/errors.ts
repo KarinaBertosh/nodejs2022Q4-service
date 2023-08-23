@@ -18,6 +18,12 @@ export class PasswordNotRight extends HttpException {
   }
 }
 
+export class Forbidden extends HttpException {
+  constructor() {
+    super('User with such login or password not exist', 403);
+  }
+}
+
 export class EntityNotFound extends HttpException {
   constructor(type: string) {
     super(`${type} id not found`, 422);

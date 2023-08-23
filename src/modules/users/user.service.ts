@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
@@ -7,7 +7,9 @@ import { randomUUID } from 'crypto';
 import { EntityNotExist, PasswordNotRight } from 'src/errors/errors';
 import { entities } from 'src/utils/entity';
 import * as bcrypt from 'bcrypt';
+import { AuthGuard } from '../auth/auth.guard';
 
+const SALT = Number(process.env.SALT) ;
 @Injectable()
 export class UserService {
   constructor(
@@ -16,22 +18,23 @@ export class UserService {
   ) { }
 
   async create(createDto: UserDto) {
-    const { password } = createDto;
-    const salt = await bcrypt.genSalt(+process.env.SALT);
-    createDto.password = await bcrypt.hash(password, salt);
+    const hash = await bcrypt.hash(createDto.password, SALT);
+    console.log(2, hash);
 
     const newUser = new User({ ...createDto });
     newUser.id = randomUUID();
+    newUser.password = hash;
 
     const createdUser = this.userRepository.create(newUser);
 
     await this.userRepository.save(createdUser);
     const user = { ...createdUser };
-    await delete user.password;
-
-    user.createdAt = 123;
-    user.updatedAt = 123;
-
+    // await delete user.password;
+    
+    // user.createdAt = 123;
+    // user.updatedAt = 123;
+    
+    console.log(666, user);
     return user;
   }
 
