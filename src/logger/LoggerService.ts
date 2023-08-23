@@ -22,6 +22,6 @@ export class MyLogger extends ConsoleLogger {
   }
 
   private customMessage(message: string, logLevel: LogLevel) {
-    console.log(`${logLevel}: ` + message);
+    console.log(`${logLevel} ➡️ : ` + message);
   }
 }

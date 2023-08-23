@@ -33,6 +33,7 @@ import { AllExceptionsFilter } from './errors/AllExceptionsFilter';
     }),
   ],
   providers: [
+    MyLogger,
     {
       provide: APP_GUARD,
       useClass: AuthGuard,
