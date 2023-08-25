@@ -28,9 +28,9 @@ export class User {
 
   @CreateDateColumn()
   @Transform(({ value }) => new Date(value).getTime())
-  createdAt: number;
+  createdAt: Date | number;
 
   @UpdateDateColumn()
   @Transform(({ value }) => new Date(value).getTime())
-  updatedAt: number;
+  updatedAt: Date | number;
 }

@@ -1,4 +1,5 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
+import { BaseError } from './BaseError';
 
 export class EntityNotExist extends HttpException {
   constructor(type: string) {
@@ -18,11 +19,11 @@ export class PasswordNotRight extends HttpException {
   }
 }
 
-export class Forbidden extends HttpException {
-  constructor() {
-    super('User with such login or password not exist', 403);
-  }
-}
+// export class Forbidden extends HttpException {
+//   constructor() {
+//     super('User with such login or password not exist', 403);
+//   }
+// }
 
 export class EntityNotFound extends HttpException {
   constructor(type: string) {
@@ -41,3 +42,22 @@ export class EntityAlreadyExists extends HttpException {
     super(`${type} already exists`, 400);
   }
 }
+
+export class NotFoundError extends BaseError {
+  constructor(content = 'Not found this entity') {
+    super('NOT FOUND', content, true);
+  }
+}
+
+export class Forbidden extends BaseError {
+  constructor(content = 'Authentication') {
+    super('AUTHENTICATION', content, true);
+  }
+}
+
+export class BadRequest extends BaseError {
+  constructor(content = 'Bad Request') {
+    super('BAD REQUEST', content, true);
+  }
+}
+

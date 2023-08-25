@@ -19,3 +19,8 @@ export class UpdatePasswordDto {
   @IsNotEmpty()
   newPassword: string;
 }
+
+export class RefreshDto {
+  id: string;
+  login: string;
+}

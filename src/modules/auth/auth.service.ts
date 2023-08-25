@@ -1,16 +1,19 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UserService } from '../users/user.service';
 import { UserDto } from '../users/dto/user.dto';
-import { User } from '../users/user.entity';
-import { Forbidden } from 'src/errors/errors';
+import { BadRequest, Forbidden } from 'src/errors/errors';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
   constructor(
+    @Inject(forwardRef(() => UserService))
     private userService: UserService,
-    private jwtService: JwtService) { }
+    private jwtService: JwtService,
+    private readonly configService: ConfigService,
+  ) { }
 
   async login(userDto: any) {
     console.log('user', userDto);
@@ -21,22 +24,12 @@ export class AuthService {
     const { login, id } = user;
     const payload = { id: id, login: login };
 
-    console.log(11, payload);
-
     const accessToken = await this.jwtService.signAsync(payload);
-
-    console.log(12, { accessToken });
-
 
     const refreshToken = await this.jwtService.signAsync(payload, {
       secret: process.env.JWT_SECRET_REFRESH_KEY,
       expiresIn: process.env.TOKEN_REFRESH_EXPIRE_TIME,
     });
-
-    console.log(13, refreshToken);
-
-
-    console.log(3, { accessToken, refreshToken });
 
     return { accessToken, refreshToken };
   }
@@ -48,11 +41,19 @@ export class AuthService {
     return null;
   }
 
+  async verifyPassword(oldPassword: string, currentHash: string) {
+    return await bcrypt.compare(oldPassword, currentHash);
+  }
+
+  async getHash(password: string) {
+    return await bcrypt.hash(password, process.env.SALT);
+  }
+
   async signUp(userDto: UserDto) {
     try {
       return await this.userService.create(userDto);
     } catch (error) {
-      throw new BadRequestException('Invalid data');
+      throw new BadRequest();
     }
   }
 

@@ -1,14 +1,16 @@
 import {
+  BadRequestException,
   Body,
   Controller,
+  ForbiddenException,
   HttpCode,
+  InternalServerErrorException,
   Post,
-  Request,
-  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { UserDto } from '../users/dto/user.dto';
+import { RefreshDto, UserDto } from '../users/dto/user.dto';
 import { Public } from './auth.guard';
+import { BadRequest, Forbidden } from 'src/errors/errors';
 
 @Controller('auth')
 export class AuthController {
@@ -18,19 +20,33 @@ export class AuthController {
   @Post('login')
   @HttpCode(200)
   async login(@Body() userDto: UserDto) {
-    return await this.authService.login(userDto);
+    try {
+      return await this.authService.login(userDto);
+    } catch (err) {
+      if (err instanceof Forbidden) throw new ForbiddenException();
+      throw new InternalServerErrorException();
+    }
   }
 
   @Public()
   @Post('signup')
   @HttpCode(201)
   async signup(@Body() userDto: UserDto) {
-    return await this.authService.signUp(userDto);
+    try {
+      return await this.authService.signUp(userDto);
+    } catch (err) {
+      if (err instanceof BadRequest) throw new BadRequestException();
+      throw new InternalServerErrorException();
+    }
   }
 
   @Post('/refresh')
   @HttpCode(200)
-  async refresh(@Request() req) {
-    return await this.authService.refresh(req.body);
+  async refresh(@Body() refreshDto: RefreshDto) {
+    try {
+      return await this.authService.refresh(refreshDto);
+    } catch {
+      throw new InternalServerErrorException();
+    }
   }
 }
