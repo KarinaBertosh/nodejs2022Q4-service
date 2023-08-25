@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { MyLogger } from './logger/LoggerService';
+import { HttpExceptionFilter } from './errors/HttpExceptionFilter';
 
 const PORT = process.env['PORT'];
 
@@ -11,7 +12,6 @@ async function bootstrap() {
     bufferLogs: true,
   });
   const logger = app.get(MyLogger);
-  app.useLogger(logger);
 
   process.on('uncaughtException', (err, origin) => {
     logger.error(`Caught exception: ${err}\n` + `origin: ${origin}`);
@@ -20,6 +20,8 @@ async function bootstrap() {
   process.on('unhandledRejection', (reason, promise) => {
     logger.debug(`Unhandled rejection: ${promise}\n` + `reason: ${reason}`);
   });
+  app.useLogger(logger);
+  app.useGlobalFilters(new HttpExceptionFilter());
 
   app.useGlobalPipes(new ValidationPipe());
   await app.listen(PORT);
