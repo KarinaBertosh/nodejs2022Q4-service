@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './modules/users/user.module';
@@ -7,12 +7,13 @@ import { ArtistModule } from './modules/artist/artist.module';
 import { AlbumModule } from './modules/album/album.module';
 import { FavoriteModule } from './modules/favorite/favorite.module';
 import typeorm from './config/typeorm';
-import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './modules/auth/auth.guard';
 import { MyLogger } from './logger/LoggerService';
 import { AuthModule } from './modules/auth/auth.module';
-import { Interceptor } from './errors/Interceptor';
-import { JwtModule, JwtService } from '@nestjs/jwt';
+import { JwtModule } from '@nestjs/jwt';
+import { AllExceptionsFilter } from './errors/AllExceptionsFilter';
+import { LoggerMiddleware } from './logger/logger.midleware';
 
 @Module({
   imports: [
@@ -40,9 +41,13 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
       useClass: AuthGuard,
     },
     {
-      provide: APP_INTERCEPTOR,
-      useClass: Interceptor,
+      provide: APP_FILTER,
+      useClass: AllExceptionsFilter,
     },
   ],
 })
-export class AppModule { }
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes('*');
+  }
+}
