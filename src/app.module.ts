@@ -7,13 +7,12 @@ import { ArtistModule } from './modules/artist/artist.module';
 import { AlbumModule } from './modules/album/album.module';
 import { FavoriteModule } from './modules/favorite/favorite.module';
 import typeorm from './config/typeorm';
-import { APP_FILTER, APP_GUARD } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { AuthGuard } from './modules/auth/auth.guard';
-import { JwtModule } from '@nestjs/jwt';
 import { MyLogger } from './logger/LoggerService';
-// import { AllExceptionsFilter } from './errors/AllExceptionsFilter';
 import { AuthModule } from './modules/auth/auth.module';
-import { AuthService } from './modules/auth/auth.service';
+import { Interceptor } from './errors/Interceptor';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -40,10 +39,10 @@ import { AuthService } from './modules/auth/auth.service';
       provide: APP_GUARD,
       useClass: AuthGuard,
     },
-    // {
-    //   provide: APP_FILTER,
-    //   useClass: AllExceptionsFilter,
-    // },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: Interceptor,
+    },
   ],
 })
 export class AppModule { }
