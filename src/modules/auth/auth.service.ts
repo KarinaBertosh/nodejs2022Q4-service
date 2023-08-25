@@ -2,7 +2,7 @@ import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UserService } from '../users/user.service';
-import { UserDto } from '../users/dto/user.dto';
+import { RefreshDto, UserDto } from '../users/dto/user.dto';
 import { BadRequest, Forbidden } from 'src/errors/errors';
 import { ConfigService } from '@nestjs/config';
 
@@ -15,30 +15,21 @@ export class AuthService {
     private readonly configService: ConfigService,
   ) { }
 
-  async login(userDto: any) {
+  async login(userDto: UserDto) {
     console.log('user', userDto);
 
-    const user = await this.validateUser(userDto);
+    const user = await this.userService.getUserByLogin(userDto.login);
     if (!user) throw new Forbidden();
 
-    const { login, id } = user;
-    const payload = { id: id, login: login };
+    const { login, id, password } = user;
 
-    const accessToken = await this.jwtService.signAsync(payload);
+    const isVerifyPassword = await this.verifyPassword(
+      userDto.password,
+      password,
+    );
+    if (!isVerifyPassword) throw new Forbidden();
 
-    const refreshToken = await this.jwtService.signAsync(payload, {
-      secret: process.env.JWT_SECRET_REFRESH_KEY,
-      expiresIn: process.env.TOKEN_REFRESH_EXPIRE_TIME,
-    });
-
-    return { accessToken, refreshToken };
-  }
-
-  async validateUser(userDto: UserDto): Promise<any> {
-    const user = await this.userService.getUserByLogin(userDto.login);
-    const validatedPass = await bcrypt.compare(userDto.password, user.password);
-    if (user && validatedPass) return user;
-    return null;
+    return await this.getTokens(id, login);
   }
 
   async verifyPassword(oldPassword: string, currentHash: string) {
@@ -57,7 +48,26 @@ export class AuthService {
     }
   }
 
-  async refresh(user: any) {
-    console.log('refresh');
+  private async getTokens(id: string, login: string) {
+    const payload = { sub: id, username: login };
+
+    const accessToken = await this.jwtService.signAsync(payload, {
+      secret: this.configService.get('auth.accessSecret'),
+      expiresIn: this.configService.get('auth.accessExpiresIn'),
+    });
+
+    const refreshToken = await this.jwtService.signAsync(payload, {
+      secret: this.configService.get('auth.refreshSecret'),
+      expiresIn: this.configService.get('auth.refreshExpiresIn'),
+    });
+
+    return {
+      accessToken,
+      refreshToken,
+    };
+  }
+
+  async refresh(refreshDto: RefreshDto) {
+    return await this.getTokens(refreshDto.id, refreshDto.login);
   }
 }
