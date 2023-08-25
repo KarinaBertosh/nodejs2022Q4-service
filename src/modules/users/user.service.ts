@@ -24,7 +24,7 @@ export class UserService {
     });
     newUser.id = randomUUID();
 
-    return new User(newUser);
+    return this.userRepository.save(newUser);
   }
 
   async findAll() {
