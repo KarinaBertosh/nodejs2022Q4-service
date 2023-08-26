@@ -33,7 +33,7 @@ export class UserService {
     await delete user.password;
     console.log(21, newUser.password);
 
-    return { id: user.id };
+    return user;
   }
 
   async findAll() {

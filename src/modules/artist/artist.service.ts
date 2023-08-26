@@ -49,7 +49,7 @@ export class ArtistService {
     newArtist.id = randomUUID();
     const createdArtist = await this.artistRepository.create(newArtist);
     await this.artistRepository.save(createdArtist);
-    return { id: createdArtist.id };
+    return createdArtist;
   }
 
   async update(id: string, dto: UpdateArtistDto) {
