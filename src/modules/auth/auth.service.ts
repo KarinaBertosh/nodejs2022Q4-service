@@ -3,8 +3,9 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UserService } from '../users/user.service';
 import { RefreshDto, UserDto } from '../users/dto/user.dto';
-import { BadRequest, Forbidden } from 'src/errors/errors';
+import { BadRequest } from 'src/errors/errors';
 import { ConfigService } from '@nestjs/config';
+import { User } from '../users/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -16,28 +17,33 @@ export class AuthService {
   ) { }
 
   async login(userDto: UserDto) {
-    console.log('user', userDto);
+    const user = await this.validateUser(userDto.login, userDto.password);
+    const tokens = await this.getTokens(user.id, user.login);
 
-    const user = await this.userService.getUserByLogin(userDto.login);
-    if (!user) throw new Forbidden();
+    if (user) return tokens;
 
-    const { login, id, password } = user;
-
-    const isVerifyPassword = await this.verifyPassword(
-      userDto.password,
-      password,
-    );
-    if (!isVerifyPassword) throw new Forbidden();
-
-    return await this.getTokens(id, login);
-  }
-
-  async verifyPassword(oldPassword: string, currentHash: string) {
-    return await bcrypt.compare(oldPassword, currentHash);
+    return null;
   }
 
   async getHash(password: string) {
     return await bcrypt.hash(password, process.env.SALT);
+  }
+
+  private async validateUser(
+    login: string,
+    password: string,
+  ): Promise<User | null> {
+    const user = await this.userService.getUserByLogin(login);
+    const verifiedUser = await this.verifyPassword(password, user.password);
+    if (!user || !verifiedUser) {
+      return null;
+    }
+
+    return user;
+  }
+
+  async verifyPassword(oldPassword: string, currentHash: string) {
+    return await bcrypt.compare(oldPassword, currentHash);
   }
 
   async signUp(userDto: UserDto) {
@@ -48,8 +54,8 @@ export class AuthService {
     }
   }
 
-  private async getTokens(id: string, login: string) {
-    const payload = { sub: id, username: login };
+  async getTokens(id: string, login: string) {
+    const payload = { id: id, username: login };
 
     const accessToken = await this.jwtService.signAsync(payload, {
       secret: process.env.JWT_SECRET_KEY,
