@@ -8,7 +8,7 @@ import { AlbumModule } from './modules/album/album.module';
 import { FavoriteModule } from './modules/favorite/favorite.module';
 import typeorm from './config/typeorm';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
-import { AuthGuard } from './modules/auth/auth.guard';
+import { MyAuthGuard } from './modules/auth/auth.guard';
 import { MyLogger } from './logger/LoggerService';
 import { AuthModule } from './modules/auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
@@ -38,7 +38,7 @@ import { LoggerMiddleware } from './logger/logger.midleware';
     MyLogger,
     {
       provide: APP_GUARD,
-      useClass: AuthGuard,
+      useClass: MyAuthGuard,
     },
     {
       provide: APP_FILTER,

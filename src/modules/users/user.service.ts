@@ -6,7 +6,7 @@ import { UpdatePasswordDto, UserDto } from './dto/user.dto';
 import { randomUUID } from 'crypto';
 import { Forbidden, NotFoundError } from 'src/errors/errors';
 import { AuthService } from '../auth/auth.service';
-import { hash } from 'bcryptjs';
+import { hash } from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -26,7 +26,10 @@ export class UserService {
     const newUser = new User({ ...createDto });
     newUser.id = randomUUID();
     await this.userRepository.create(newUser);
-    return await this.userRepository.save(newUser);
+    await this.userRepository.save(newUser);
+    const user = { ...newUser };
+    await delete user.password;
+    return user;
   }
 
   async findAll() {
