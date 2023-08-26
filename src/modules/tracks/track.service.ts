@@ -32,7 +32,8 @@ export class TrackService {
     const newTrack = new Track({ ...createDto });
     newTrack.id = randomUUID();
     const createdTrack = await this.trackRepository.create(newTrack);
-    return await this.trackRepository.save(createdTrack);
+    await this.trackRepository.save(createdTrack);
+    return { id: newTrack.id };
   }
 
   async update(id: string, updateDto: UpdateTrackDto) {

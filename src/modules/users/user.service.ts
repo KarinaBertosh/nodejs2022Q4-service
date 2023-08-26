@@ -29,7 +29,7 @@ export class UserService {
     await this.userRepository.save(newUser);
     const user = { ...newUser };
     await delete user.password;
-    return user;
+    return { id: user.id };
   }
 
   async findAll() {

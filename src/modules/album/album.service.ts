@@ -40,7 +40,8 @@ export class AlbumService {
     const newAlbum = new Album({ ...dto });
     newAlbum.id = randomUUID();
     const createdTrack = await this.albumRepository.create(newAlbum);
-    return await this.albumRepository.save(createdTrack);
+    await this.albumRepository.save(createdTrack);
+    return { id: createdTrack.id };
   }
 
   async update(id: string, updateDto: UpdateAlbumDto) {
