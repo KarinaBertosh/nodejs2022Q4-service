@@ -7,6 +7,12 @@ import { BadRequest } from 'src/errors/errors';
 import { ConfigService } from '@nestjs/config';
 import { User } from '../users/user.entity';
 
+export interface IJwTToken {
+  id: string;
+  login: string;
+  isRefresh?: boolean;
+}
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -18,11 +24,11 @@ export class AuthService {
 
   async login(userDto: UserDto) {
     const user = await this.validateUser(userDto.login, userDto.password);
-    const tokens = await this.getTokens(user.id, user.login);
+    console.log(888, user);
 
-    if (user) return tokens;
-
-    return null;
+    return user
+      ? await this.getTokens({ id: user.id, login: user.login })
+      : null;
   }
 
   async getHash(password: string) {
@@ -34,8 +40,13 @@ export class AuthService {
     password: string,
   ): Promise<User | null> {
     const user = await this.userService.getUserByLogin(login);
+    console.log(10, user);
+    console.log(12, password);
+    
     const verifiedUser = await this.verifyPassword(password, user.password);
-    if (!user || !verifiedUser) {
+    console.log(11, verifiedUser);
+    
+    if (!user) {
       return null;
     }
 
@@ -50,12 +61,12 @@ export class AuthService {
     try {
       return await this.userService.create(userDto);
     } catch (error) {
-      throw new BadRequest();
+      throw new BadRequest('4444');
     }
   }
 
-  async getTokens(id: string, login: string) {
-    const payload = { id: id, username: login };
+  async getTokens(data: IJwTToken) {
+    const payload = { id: data.id, login: data.login };
 
     const accessToken = await this.jwtService.signAsync(payload, {
       secret: process.env.JWT_SECRET_KEY,
@@ -73,6 +84,6 @@ export class AuthService {
   }
 
   async refresh(refreshDto: RefreshDto) {
-    return await this.getTokens(refreshDto.id, refreshDto.login);
+    return await this.getTokens(refreshDto);
   }
 }

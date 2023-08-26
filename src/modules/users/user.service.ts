@@ -19,6 +19,8 @@ export class UserService {
   ) { }
 
   async create(createDto: UserDto) {
+    console.log(20, createDto.password);
+    
     createDto.password = await hash(
       createDto.password,
       Number(process.env.SALT),
@@ -29,6 +31,8 @@ export class UserService {
     await this.userRepository.save(newUser);
     const user = { ...newUser };
     await delete user.password;
+    console.log(21, newUser.password);
+
     return { id: user.id };
   }
 

@@ -20,12 +20,12 @@ export class AuthController {
   @Post('login')
   @HttpCode(200)
   async login(@Body() userDto: UserDto) {
-    try {
-      return await this.authService.login(userDto);
-    } catch (err) {
-      if (err instanceof Forbidden) throw new ForbiddenException();
-      throw new InternalServerErrorException();
+    const login = await this.authService.login(userDto);
+
+    if (!login) {
+      throw new ForbiddenException('No user with such login, password.');
     }
+    return login;
   }
 
   @Public()
@@ -35,8 +35,8 @@ export class AuthController {
     try {
       return await this.authService.signUp(userDto);
     } catch (err) {
-      if (err instanceof BadRequest) throw new BadRequestException();
-      throw new InternalServerErrorException();
+      if (err instanceof BadRequest) throw new BadRequestException("ggg");
+      throw new InternalServerErrorException("sss");
     }
   }
 
