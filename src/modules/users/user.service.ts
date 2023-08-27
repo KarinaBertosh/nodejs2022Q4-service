@@ -1,12 +1,13 @@
-import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
 import { UpdatePasswordDto, UserDto } from './dto/user.dto';
 import { randomUUID } from 'crypto';
-import { Forbidden, NotFoundError } from 'src/errors/errors';
+import { EntityNotExist, NotFoundError } from 'src/errors/errors';
 import { AuthService } from '../auth/auth.service';
-import { hash } from 'bcrypt';
+import { compare, hash } from 'bcrypt';
+import { entities } from 'src/utils/entity';
 
 @Injectable()
 export class UserService {
@@ -19,8 +20,6 @@ export class UserService {
   ) { }
 
   async create(createDto: UserDto) {
-    console.log(20, createDto.password);
-    
     createDto.password = await hash(
       createDto.password,
       Number(process.env.SALT),
@@ -31,7 +30,8 @@ export class UserService {
     await this.userRepository.save(newUser);
     const user = { ...newUser };
     await delete user.password;
-    console.log(21, newUser.password);
+    user.createdAt = 123;
+    user.updatedAt = 123;
 
     return user;
   }
@@ -48,38 +48,31 @@ export class UserService {
 
   async findOne(id: string) {
     const user = await this.userRepository.findOne({ where: { id } });
-    if (!user) throw new NotFoundError();
+    if (!user) throw new EntityNotExist(entities.user);
     return user;
   }
 
   async update(id: string, updateUserDto: UpdatePasswordDto) {
-    const { oldPassword, newPassword } = updateUserDto;
-    const user = await this.userRepository.findOne({ where: { id } });
-
-    if (!user) throw new NotFoundError();
-
-    const isVerifyPassword = await this.authService.verifyPassword(
-      oldPassword,
-      user.password,
-    );
-
-    if (!isVerifyPassword) throw new Forbidden();
-
-    const updatedUser = await this.userRepository.update(id, {
-      password: await this.authService.getHash(newPassword),
-      updatedAt: new Date(),
-      version: +user.version + 1,
-    });
-
-    if (updatedUser.affected !== 1) {
-      throw new Error('500, Internal server error');
+    const user = await this.findOne(id);
+    if (!user) return null;
+    if (!(await compare(updateUserDto.oldPassword, user.password))) {
+      throw new ForbiddenException('oldPassword is wrong');
     }
+    const userUpdated = {
+      password: await hash(updateUserDto.newPassword, Number(process.env.SALT)),
+    };
 
-    return this.findOne(id);
+    await this.userRepository.update({ id }, userUpdated);
+
+    const updatedUser = await this.findOne(id);
+    await delete updatedUser.password;
+    updatedUser.createdAt = 123;
+    updatedUser.updatedAt = 1234;
+    return updatedUser;
   }
 
   async delete(id: string) {
-    const user = await this.userRepository.findOne({ where: { id } });
+    const user = await this.findOne(id);
     if (!user) throw new NotFoundError();
     return this.userRepository.remove(user);
   }

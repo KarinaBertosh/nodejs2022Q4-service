@@ -15,7 +15,8 @@ import { UserService } from './user.service';
 import { User } from './user.entity';
 import { UpdatePasswordDto, UserDto } from './dto/user.dto';
 import { UUID } from 'src/utils/uuid';
-import { Forbidden, NotFoundError } from 'src/errors/errors';
+import { BadRequest, EntityNotExist, Forbidden, NotFoundError } from 'src/errors/errors';
+import { entities } from 'src/utils/entity';
 
 @Controller('user')
 export class UserController {
@@ -24,11 +25,8 @@ export class UserController {
   @Post()
   @HttpCode(201)
   async create(@Body() userDto: UserDto) {
-    try {
-      return await this.userService.create(userDto);
-    } catch {
-      throw new InternalServerErrorException();
-    }
+    if (!userDto.login || !userDto.password) throw new BadRequest();
+    return this.userService.create(userDto);
   }
 
   @Get()
@@ -38,36 +36,29 @@ export class UserController {
 
   @Get(':id')
   async findOne(@Param() { id }: UUID): Promise<User> {
-    try {
-      return await this.userService.findOne(id);
-    } catch (err) {
-      if (err instanceof NotFoundError) throw new NotFoundException();
-      throw new InternalServerErrorException();
-    }
+    const user = await this.userService.findOne(id);
+    if (!user) throw new EntityNotExist(entities.user);
+    return user;
   }
 
   @Put(':id')
   async update(
     @Param() { id }: UUID,
     @Body() updateUserDto: UpdatePasswordDto,
-  ): Promise<User> {
-    try {
-      return await this.userService.update(id, updateUserDto);
-    } catch (err) {
-      if (err instanceof NotFoundError) throw new NotFoundException();
-      else if (err instanceof Forbidden) throw new ForbiddenException();
-      throw new InternalServerErrorException();
-    }
+  ) {
+    if (!updateUserDto.oldPassword || !updateUserDto.newPassword)
+      throw new BadRequest();
+
+    const user = await this.userService.update(id, updateUserDto);
+    if (!user) throw new EntityNotExist(entities.user);
+    return user;
   }
 
   @Delete(':id')
   @HttpCode(204)
   async remove(@Param() { id }: UUID) {
-    try {
-      return await this.userService.delete(id);
-    } catch (err) {
-      if (err instanceof NotFoundError) throw new NotFoundException();
-      throw new InternalServerErrorException();
-    }
+    const user = await this.userService.delete(id);
+    if (!user) throw new EntityNotExist(entities.user);
+    return user;
   }
 }
