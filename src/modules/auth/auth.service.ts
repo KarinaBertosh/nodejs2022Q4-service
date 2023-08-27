@@ -2,10 +2,18 @@ import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UserService } from '../users/user.service';
-import { RefreshDto, UserDto } from '../users/dto/user.dto';
+import { RefreshDto, UpdateDto, UserDto } from '../users/dto/user.dto';
 import { BadRequest } from 'src/errors/errors';
 import { ConfigService } from '@nestjs/config';
 import { User } from '../users/user.entity';
+
+export interface IJWT {
+  id: string;
+  login: string;
+  iat: number;
+  exp: number;
+  isRefresh?: boolean;
+}
 
 export interface IJwTToken {
   id: string;
@@ -42,10 +50,10 @@ export class AuthService {
     const user = await this.userService.getUserByLogin(login);
     console.log(10, user);
     console.log(12, password);
-    
+
     const verifiedUser = await this.verifyPassword(password, user.password);
     console.log(11, verifiedUser);
-    
+
     if (!user) {
       return null;
     }
@@ -80,10 +88,26 @@ export class AuthService {
 
     return {
       accessToken: accessToken,
+      refreshToken: refreshToken,
     };
   }
 
-  async refresh(refreshDto: RefreshDto) {
-    return await this.getTokens(refreshDto);
+  async refresh(updateAuthDto: UpdateDto) {
+    try {
+      const data: IJWT = await this.jwtService.verifyAsync(
+        updateAuthDto.refreshToken,
+        { maxAge: process.env.JWT_REFRESH_EXPIRE_TIME },
+      );
+      const { id, login, isRefresh = false } = data;
+      const user = await this.userService.getUserByLogin(login);
+
+      if (user && user.id === id && isRefresh) {
+        return await this.getTokens({ id: user.id, login: user.login });
+      }
+
+      return null;
+    } catch (e) {
+      return null;
+    }
   }
 }

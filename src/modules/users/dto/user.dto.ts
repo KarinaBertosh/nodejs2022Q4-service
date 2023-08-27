@@ -24,3 +24,9 @@ export class RefreshDto {
   id: string;
   login: string;
 }
+
+export class UpdateDto {
+  @IsString()
+  @IsNotEmpty()
+  refreshToken: string;
+}

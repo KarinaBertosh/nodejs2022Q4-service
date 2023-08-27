@@ -8,9 +8,9 @@ import {
   Post,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { RefreshDto, UserDto } from '../users/dto/user.dto';
+import { RefreshDto, UpdateDto, UserDto } from '../users/dto/user.dto';
 import { Public } from './auth.guard';
-import { BadRequest, Forbidden } from 'src/errors/errors';
+import { BadRequest } from 'src/errors/errors';
 
 @Controller('auth')
 export class AuthController {
@@ -35,18 +35,17 @@ export class AuthController {
     try {
       return await this.authService.signUp(userDto);
     } catch (err) {
-      if (err instanceof BadRequest) throw new BadRequestException("ggg");
-      throw new InternalServerErrorException("sss");
+      if (err instanceof BadRequest) throw new BadRequestException();
+      throw new InternalServerErrorException();
     }
   }
 
+  @Public()
   @Post('/refresh')
   @HttpCode(200)
-  async refresh(@Body() refreshDto: RefreshDto) {
-    try {
-      return await this.authService.refresh(refreshDto);
-    } catch {
-      throw new InternalServerErrorException();
-    }
+  async refresh(@Body() dto: UpdateDto) {
+    const token = this.authService.refresh(dto);
+    if (!token) throw new ForbiddenException('Refresh token is invalid');
+    return token;
   }
 }
