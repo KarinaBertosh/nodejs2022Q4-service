@@ -69,7 +69,7 @@ export class AuthService {
     try {
       return await this.userService.create(userDto);
     } catch (error) {
-      throw new BadRequest('4444');
+      throw new BadRequest();
     }
   }
 

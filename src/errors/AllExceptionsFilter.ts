@@ -1,72 +1,50 @@
 import {
-  ExceptionFilter,
-  Catch,
   ArgumentsHost,
+  Catch,
+  ExceptionFilter,
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import { HttpAdapterHost } from '@nestjs/core';
-import { MyLogger } from 'src/logger/LoggerService';
 import { Request, Response } from 'express';
+import { MyLogger } from 'src/logger/LoggerService';
+import { getErrorData, getMessage } from 'src/logger/message';
+
+interface ExceptionResponse {
+  statusCode: number;
+  error: string;
+  stack?: string;
+}
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
-  constructor(
-    private readonly httpAdapterHost: HttpAdapterHost,
-    private readonly myLogger: MyLogger,) { }
+  private myLogger: MyLogger;
 
-  catch(exception: unknown, host: ArgumentsHost): void {
-    const { httpAdapter } = this.httpAdapterHost;
+  constructor() {
+    this.myLogger = new MyLogger();
+  }
+
+  catch = async (exception: unknown, host: ArgumentsHost): Promise<any> => {
     const ctx = host.switchToHttp();
-    const request = ctx.getRequest<Request>();
-    const { method, url, query, body } = request;
-    this.myLogger.setContext(url);
+    const resp = ctx.getResponse<Response>();
+    const req = ctx.getRequest<Request>();
+    const { path, query, body, method } = req;
 
-    const httpStatus =
-      exception instanceof HttpException
-        ? exception.getStatus()
-        : HttpStatus.INTERNAL_SERVER_ERROR;
+    let status: HttpStatus;
+    let errCtx: string;
 
     if (exception instanceof HttpException) {
-      const message = exception.message;
-
-      const responseBody = {
-        statusCode: httpStatus,
-        message,
-        timestamp: new Date().toISOString(),
-        path: url,
-      };
-
-      this.myLogger.log(
-        `Method: "${method}",
-        URL: "${url}",
-        Query: ${JSON.stringify(query, null, 1)},
-        Status-code: ${httpStatus},
-        Requests-body: ${JSON.stringify(body, null, 1)},
-        Error: ${JSON.stringify(responseBody, null, 1)}`,
-      );
-
-      httpAdapter.reply(ctx.getResponse<Response>(), responseBody, httpStatus);
+      const errorResponse = exception.getResponse() as ExceptionResponse;
+      status = exception.getStatus();
+      errCtx = errorResponse.error || exception.message;
+    } else {
+      status = HttpStatus.INTERNAL_SERVER_ERROR;
+      errCtx = 'Internal erver error';
     }
 
-    const responseBody = {
-      statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-      message: 'Internal Server Error',
-    };
+    const respErr = await getErrorData(status, errCtx, req);
+    const ctxLog = getMessage({ path, query, body, method, status });
 
-    this.myLogger.log(
-      `Method: "${method}",
-      URL: "${url}",
-      Query: ${JSON.stringify(query, null, 1)},
-      Status-code: ${httpStatus},
-      Requests-body: ${JSON.stringify(body, null, 1)},
-      Error: ${JSON.stringify(responseBody, null, 1)}`,
-    );
-
-    httpAdapter.reply(
-      ctx.getResponse<Response>(),
-      responseBody,
-      HttpStatus.INTERNAL_SERVER_ERROR,
-    );
-  }
-};
+    this.myLogger.error(ctxLog);
+    resp.status(status).json(respErr);
+  };
+}
