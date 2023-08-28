@@ -21,7 +21,6 @@ async function bootstrap() {
     logger.debug(`Unhandled rejection: ${promise}\n` + `reason: ${reason}`);
   });
   app.useLogger(logger);
-  app.useGlobalFilters(new HttpExceptionFilter());
 
   app.useGlobalPipes(new ValidationPipe());
   await app.listen(PORT);

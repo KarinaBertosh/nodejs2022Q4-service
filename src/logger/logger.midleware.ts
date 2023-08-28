@@ -59,7 +59,7 @@ export class LoggerMiddleware implements NestMiddleware {
     const formattedStartTime = new Date(startTime).toISOString();
     const formattedEndTime = new Date(endTime).toISOString();
 
-    return `[HTTP-REQUEST] ${method} ${url} ${JSON.stringify(
+    return `${method} ${url} ${JSON.stringify(
       query,
     )} ${JSON.stringify(
       body,
