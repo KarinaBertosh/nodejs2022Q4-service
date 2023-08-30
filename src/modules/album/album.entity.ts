@@ -1,8 +1,8 @@
 import {
   Column,
   Entity,
+  JoinColumn,
   ManyToOne,
-  OneToMany,
   PrimaryColumn,
 } from 'typeorm';
 import { Track } from '../tracks/track.entity';
@@ -26,12 +26,13 @@ export class Album {
   @Column({ nullable: true })
   artistId: string | null;
 
-  @OneToMany(() => Track, (track) => track.albumId)
-  tracks: Track[];
-
   @ManyToOne(() => Artist, (artist) => artist.id, {
-    nullable: true,
     onDelete: 'SET NULL',
+    nullable: true,
   })
-  artist: Artist;
+  @JoinColumn({
+    name: 'artistId',
+    referencedColumnName: 'id',
+  })
+  artist: string | null;
 }

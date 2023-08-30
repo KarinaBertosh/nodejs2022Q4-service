@@ -12,6 +12,7 @@ import { ArtistService } from './artist.service';
 import { ArtistDto, UpdateArtistDto } from './dto/artist.dto';
 import { entities } from 'src/utils/entity';
 import { UUID } from 'src/utils/uuid';
+import { EntityNotExist } from 'src/errors/errors';
 
 @Controller(entities.artist)
 export class ArtistController {
@@ -33,8 +34,10 @@ export class ArtistController {
   }
 
   @Put(':id')
-  update(@Param() { id }: UUID, @Body() updateDto: UpdateArtistDto) {
-    return this.artistService.update(id, updateDto);
+  async update(@Param() { id }: UUID, @Body() updateDto: UpdateArtistDto) {
+    const artist = await this.artistService.update(id, updateDto);
+    if (!artist) throw new EntityNotExist(entities.artist);
+    return artist;
   }
 
   @Delete(':id')

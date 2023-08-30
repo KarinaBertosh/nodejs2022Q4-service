@@ -6,25 +6,26 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Album } from './album.entity';
 import { Repository } from 'typeorm';
 import { randomUUID } from 'crypto';
-import { TrackService } from '../tracks/track.service';
-import { FavoriteService } from '../favorite/favorite.service';
-import { Track } from '../tracks/track.entity';
+import { ArtistService } from '../artist/artist.service';
 
 @Injectable()
 export class AlbumService {
   constructor(
     @InjectRepository(Album)
-    private readonly albumRepository: Repository<Album>,
-
-    @InjectRepository(Track)
-    private readonly trackRepository: Repository<Track>,
-
-    @Inject(forwardRef(() => FavoriteService))
-    private readonly favoriteService: FavoriteService,
-
-    @Inject(forwardRef(() => TrackService))
-    private readonly trackService: TrackService,
+    private albumRepository: Repository<Album>,
+    private artistService: ArtistService,
   ) { }
+
+  private checkAndMakeCorrectIdArtist = async (
+    options: AlbumDto | UpdateAlbumDto,
+  ): Promise<void> => {
+    const artist = await this.artistService.findOne(options.artistId);
+
+    if (!artist) {
+      options.artistId = null;
+    }
+  };
+
 
   async findAll() {
     return await this.albumRepository.find();
@@ -37,29 +38,26 @@ export class AlbumService {
   }
 
   async create(dto: AlbumDto) {
-    const newAlbum = new Album({ ...dto });
-    newAlbum.id = randomUUID();
-    const createdTrack = await this.albumRepository.create(newAlbum);
-    await this.albumRepository.save(createdTrack);
-    return createdTrack;
+    if (dto.artistId) {
+      await this.checkAndMakeCorrectIdArtist(dto);
+    }
+    const album = await this.albumRepository.create({
+      ...dto,
+      id: randomUUID(),
+    });
+    return await this.albumRepository.save(album);
   }
 
   async update(id: string, updateDto: UpdateAlbumDto) {
-    const album = await this.albumRepository.findOne({ where: { id } });
-    if (!album) throw new EntityNotExist(entities.album);
+    if (updateDto.artistId) {
+      await this.checkAndMakeCorrectIdArtist(updateDto);
+    }
 
-    const updatedAlbum = Object.assign(album, updateDto);
-    return await this.albumRepository.save(updatedAlbum);
-  }
-
-  async updateFav(id: string) {
     const album = await this.albumRepository.findOneBy({ id });
-    if (!album) throw new EntityNotContent(entities.album);
+    if (!album) return null;
 
-    const tracks = await this.trackRepository.find();
-    const track = tracks.find((t) => t.albumId === album.id);
-    if (!track) throw new EntityNotContent(entities.track);
-    track.albumId = null;
+    await this.albumRepository.update({ id }, updateDto);
+    return await this.albumRepository.findOneBy({ id });
   }
 
   async delete(id: string) {

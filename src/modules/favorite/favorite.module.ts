@@ -14,10 +14,10 @@ import { Track } from '../tracks/track.entity';
   controllers: [FavoriteController],
   providers: [FavoriteService],
   imports: [
-    TypeOrmModule.forFeature([Favorites, Album, Artist, Track]),
-    forwardRef(() => TrackModule),
-    forwardRef(() => ArtistModule),
-    forwardRef(() => AlbumModule),
+    TypeOrmModule.forFeature([Favorites]),
+    AlbumModule,
+    ArtistModule,
+    TrackModule,
   ],
   exports: [FavoriteService],
 })

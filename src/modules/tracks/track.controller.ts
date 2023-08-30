@@ -12,6 +12,7 @@ import { TrackService } from './track.service';
 import { TrackDto, UpdateTrackDto } from './dto/track.dto';
 import { entities } from 'src/utils/entity';
 import { UUID } from 'src/utils/uuid';
+import { EntityNotExist } from 'src/errors/errors';
 
 @Controller(entities.track)
 export class TrackController {
@@ -33,8 +34,10 @@ export class TrackController {
   }
 
   @Put(':id')
-  update(@Param() { id }: UUID, @Body() updateDto: UpdateTrackDto) {
-    return this.trackService.update(id, updateDto);
+  async update(@Param() { id }: UUID, @Body() updateDto: UpdateTrackDto) {
+    const track = await this.trackService.update(id, updateDto);
+    if (!track) throw new EntityNotExist(entities.track);
+    return track;
   }
 
   @HttpCode(204)

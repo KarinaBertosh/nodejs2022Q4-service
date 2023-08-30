@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, PrimaryColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import { Album } from '../album/album.entity';
 import { Artist } from '../artist/artist.entity';
 
@@ -14,24 +14,32 @@ export class Track {
   @Column()
   name: string;
 
-  @Column()
-  duration: number;
-
-  @Column({ nullable: true })
-  artistId: string | null;
-
   @Column({ nullable: true })
   albumId: string | null;
 
   @ManyToOne(() => Album, (album) => album.id, {
-    nullable: true,
     onDelete: 'SET NULL',
+    nullable: true,
   })
-  album: Album;
+  @JoinColumn({
+    name: 'albumId',
+    referencedColumnName: 'id',
+  })
+  album: string | null;
+
+  @Column({ nullable: true })
+  artistId: string | null;
 
   @ManyToOne(() => Artist, (artist) => artist.id, {
-    nullable: true,
     onDelete: 'SET NULL',
+    nullable: true,
   })
-  artist: Artist;
+  @JoinColumn({
+    name: 'artistId',
+    referencedColumnName: 'id',
+  })
+  artist: string | null;
+
+  @Column()
+  duration: number;
 }

@@ -1,22 +1,24 @@
-import { Entity, JoinTable, ManyToMany, PrimaryColumn } from 'typeorm';
+import { Entity, JoinTable, ManyToMany, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
 import { Album } from '../album/album.entity';
 import { Artist } from '../artist/artist.entity';
 import { Track } from '../tracks/track.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity('favorites')
 export class Favorites {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn('uuid')
+  @Exclude()
   id: string;
 
-  @ManyToMany(() => Album, (album) => album, { cascade: true })
+  @ManyToMany(() => Album, { eager: true })
   @JoinTable()
-  albums: Album[];
+  albums: Array<Album>;
 
-  @ManyToMany(() => Artist, (artist) => artist, { cascade: true })
+  @ManyToMany(() => Artist, { eager: true })
   @JoinTable()
-  artists: Artist[];
+  artists: Array<Artist>;
 
-  @ManyToMany(() => Track, (track) => track, { cascade: true })
+  @ManyToMany(() => Track, { eager: true })
   @JoinTable()
-  tracks: Track[];
+  tracks: Array<Track>;
 }
