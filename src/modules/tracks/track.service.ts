@@ -1,11 +1,10 @@
-import { Injectable, Inject, forwardRef } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { TrackDto, UpdateTrackDto } from './dto/track.dto';
-import { EntityNotContent, EntityNotExist } from 'src/errors/errors';
+import { EntityNotExist } from 'src/errors/errors';
 import { entities } from 'src/utils/entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Track } from './track.entity';
 import { Repository } from 'typeorm';
-import { randomUUID } from 'crypto';
 
 @Injectable()
 export class TrackService {
@@ -25,16 +24,14 @@ export class TrackService {
   }
 
   async create(dto: TrackDto) {
-    // const track = { ...dto, id: randomUUID() };
     const createdTrack = await this.trackRepository.create(dto);
     return await this.trackRepository.save(createdTrack);
   }
 
-  async update(id: string, updateDto: UpdateTrackDto) {
-    const track = await this.findOne(id);
-    if (!track) return null;
-    await this.trackRepository.update({ id }, updateDto);
-    return await this.trackRepository.findOneBy({ id });
+  async update(id: string, dto: UpdateTrackDto) {
+    await this.findOne(id);
+    await this.trackRepository.update({ id }, dto);
+    return await this.findOne(id);
   }
 
   async delete(id: string) {
