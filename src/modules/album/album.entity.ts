@@ -3,10 +3,8 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  PrimaryColumn,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Track } from '../tracks/track.entity';
 import { Artist } from '../artist/artist.entity';
 
 @Entity('albums')

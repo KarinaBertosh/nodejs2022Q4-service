@@ -12,7 +12,6 @@ import { AlbumService } from './album.service';
 import { AlbumDto, UpdateAlbumDto } from './dto/album.dto';
 import { entities } from 'src/utils/entity';
 import { UUID } from 'src/utils/uuid';
-import { EntityNotExist } from 'src/errors/errors';
 
 @Controller(entities.album)
 export class AlbumController {
@@ -29,15 +28,13 @@ export class AlbumController {
 
   @Post()
   @HttpCode(201)
-  create(@Body() createDto: AlbumDto) {
-    return this.albumService.create(createDto);
+  create(@Body() dto: AlbumDto) {
+    return this.albumService.create(dto);
   }
 
   @Put(':id')
-  async update(@Param() { id }: UUID, @Body() updateDto: UpdateAlbumDto) {
-    const album = await this.albumService.update(id, updateDto);
-    if (!album) throw new EntityNotExist(entities.album);
-    return album;
+  async update(@Param() { id }: UUID, @Body() dto: UpdateAlbumDto) {
+    return await this.albumService.update(id, dto);
   }
 
   @Delete(':id')
