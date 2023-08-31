@@ -1,22 +1,34 @@
 # Home Library Service
+- Dockerized REST API with Prisma ORM & PostgreSQL database with Live-Reload support for files in src/ folder, with JWT authentication, and with custom logger
 
+- Users can create, read, update, delete data about Artists, Tracks and Albums, add them to Favorites in their own Home Library!
 
-## Prerequisites
+## Installation
 
-- Git - [Download & Install Git](https://git-scm.com/downloads).
-- Node.js - [Download & Install Node.js](https://nodejs.org/en/download/) and the npm package manager.
+IMPORTANT: Use Node.js LTS version (18.17.1 at the time of writing)
 
-## Downloading
+Clone this repository
 
-```
-git clone https://github.com/KarinaBertosh/nodejs2022Q4-service.git
-```
+Switch to develop branch: git checkout develop
 
-## Installing NPM modules
+Install all project dependencies with npm install
 
-```
-npm install
-```
+Start Docker Desktop (only if you are MS Windows user, otherwise skip this step)
+
+Run docker compose up -d --build and wait until images are created & containers are started. You can check status of containers with docker ps
+
+Run TypeORM migrations: npm run migration:run
+
+Everything should be ready and now you can run authentication tests npm run test:auth and check out logs written by custom logger in ./logs/ folder
+
+## JWT authentication
+
+Note: /auth/refresh route is not covered by unit tests. You can check it manually via Postman, Insomnia, or if you use REST Client extension for VS Code, you can perform requests using hls-auth.http provided by me.
+
+## Custom logger
+
+Logs are residing in the ./logs/ folder mounted via Docker bind mount. There are two log files: log-number.log - contains log messages with all matching log levels, and error-number.log - contains only log messages with error logging level.
+
 
 ## Running application
 

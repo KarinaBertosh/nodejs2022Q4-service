@@ -18,7 +18,7 @@ export class MyLogger extends ConsoleLogger {
       0,
       LOGGER_LEVEL,
     ) as Array<LogLevel>,
-    private logDirectory = join(__dirname, '..', '..', 'LoggerLogs'),
+    private logDirectory = join(__dirname, '..', '..', 'logs'),
   ) {
     super(MyLogger.name, {
       logLevels: Object.keys(LOGGER_VARIABLES).slice(
