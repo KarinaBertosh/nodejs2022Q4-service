@@ -1,4 +1,3 @@
-
 export const LOGGER_MAX_SIZE = +process.env.FILE_MAX_SIZE || 1;
 
 export const LOGGER_DIRECTORY = 'logs';

@@ -2,7 +2,6 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { MyLogger } from './logger/LoggerService';
-import { HttpExceptionFilter } from './errors/HttpExceptionFilter';
 
 const PORT = process.env['PORT'];
 

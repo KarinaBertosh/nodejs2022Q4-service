@@ -138,33 +138,29 @@ export class MyLogger extends ConsoleLogger {
     if (!this.levels.includes(LOGGER_VARIABLES.log)) return;
   };
 
-  log = (ctx: any, ...restParams: any[]) => {
+  getMessage(ctx: any, restParams: any[], error?: any) {
     this.checkLevels();
-    this.writeCtxToFile(ctx);
+    this.writeCtxToFile(ctx, error);
     super.log(ctx, restParams);
+  }
+
+  log = (ctx: any, ...restParams: any[]) => {
+    this.getMessage(ctx, restParams);
   };
 
   error = (ctx: any, ...restParams: any[]) => {
-    this.checkLevels();
-    this.writeCtxToFile(ctx, LOGGER_FILES.error);
-    super.error(ctx, restParams);
+    this.getMessage(ctx, restParams, LOGGER_FILES.error);
   };
 
   warn = (ctx: any, ...restParams: any[]) => {
-    this.checkLevels();
-    this.writeCtxToFile(ctx);
-    super.warn(ctx, restParams);
+    this.getMessage(ctx, restParams);
   };
 
   debug = (ctx: any, ...restParams: any[]) => {
-    this.checkLevels();
-    this.writeCtxToFile(ctx);
-    super.debug(ctx, restParams);
+    this.getMessage(ctx, restParams);
   };
 
   verbose = (ctx: any, ...restParams: any[]) => {
-    this.checkLevels();
-    this.writeCtxToFile(ctx);
-    super.verbose(ctx, restParams);
+    this.getMessage(ctx, restParams);
   };
 }

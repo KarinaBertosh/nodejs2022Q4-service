@@ -1,7 +1,6 @@
 import { EOL } from 'os';
 import { Request } from 'express';
 
-
 export const getMessage = ({ path, query, body, method, status }): string => {
   const message = `Url: ${path},${EOL}Query: ${JSON.stringify(
     query,

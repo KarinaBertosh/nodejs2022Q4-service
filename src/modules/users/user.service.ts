@@ -6,7 +6,7 @@ import { UpdatePasswordDto, UserDto } from './dto/user.dto';
 import { BadRequest, EntityNotExist, NotCorrect } from 'src/errors/errors';
 import { hash } from 'bcrypt';
 import { entities } from 'src/utils/entity';
-import { isCorrectPassword } from 'src/utils/types';
+import { isCorrectPassword } from 'src/utils/common';
 
 @Injectable()
 export class UserService {

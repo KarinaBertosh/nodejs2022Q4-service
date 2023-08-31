@@ -11,7 +11,7 @@ import { UserService } from '../users/user.service';
 import { UpdateDto, UserDto } from '../users/dto/user.dto';
 import { BadRequest, NotCorrect } from 'src/errors/errors';
 import { User } from '../users/user.entity';
-import { isCorrectPassword } from 'src/utils/types';
+import { isCorrectPassword } from 'src/utils/common';
 
 interface IJWT {
   id: string;
