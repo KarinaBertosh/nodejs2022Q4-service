@@ -3,13 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
 import { UpdatePasswordDto, UserDto } from './dto/user.dto';
-import {
-  BadRequest,
-  EntityNotExist,
-  PasswordNotCorrect,
-} from 'src/errors/errors';
-import { compare, hash } from 'bcrypt';
+import { BadRequest, EntityNotExist, NotCorrect } from 'src/errors/errors';
+import { hash } from 'bcrypt';
 import { entities } from 'src/utils/entity';
+import { isCorrectPassword } from 'src/utils/types';
 
 @Injectable()
 export class UserService {
@@ -47,10 +44,6 @@ export class UserService {
     return user;
   }
 
-  async isCorrectPassword(oldPassword: string, currentPassword: string) {
-    return await compare(oldPassword, currentPassword);
-  }
-
   async getHashPassword(newPassword: string) {
     return await hash(newPassword, Number(process.env.SALT));
   }
@@ -58,8 +51,8 @@ export class UserService {
   async update(id: string, dto: UpdatePasswordDto) {
     const user = await this.findOne(id);
 
-    if (!(await this.isCorrectPassword(dto.oldPassword, user.password)))
-      throw new PasswordNotCorrect();
+    if (!(await isCorrectPassword(dto.oldPassword, user.password)))
+      throw new NotCorrect();
 
     await this.userRepository.update(
       { id },

@@ -1,3 +1,5 @@
+import { compare } from "bcrypt";
+
 export interface User {
   id?: string;
   login: string;
@@ -33,4 +35,10 @@ export interface Favorites {
   albums: string[];
   tracks: string[];
 }
+
+export const isCorrectPassword = async (
+  oldPassword: string,
+  currentPassword: string,
+) => await compare(oldPassword, currentPassword);
+
 

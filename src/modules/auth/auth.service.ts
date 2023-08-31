@@ -1,13 +1,19 @@
-import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+  forwardRef,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UserService } from '../users/user.service';
-import { RefreshDto, UpdateDto, UserDto } from '../users/dto/user.dto';
-import { BadRequest } from 'src/errors/errors';
-import { ConfigService } from '@nestjs/config';
+import { UpdateDto, UserDto } from '../users/dto/user.dto';
+import { BadRequest, NotCorrect } from 'src/errors/errors';
 import { User } from '../users/user.entity';
+import { isCorrectPassword } from 'src/utils/types';
 
-export interface IJWT {
+interface IJWT {
   id: string;
   login: string;
   iat: number;
@@ -15,7 +21,7 @@ export interface IJWT {
   isRefresh?: boolean;
 }
 
-export interface IJwTToken {
+interface IJwTToken {
   id: string;
   login: string;
   isRefresh?: boolean;
@@ -27,13 +33,10 @@ export class AuthService {
     @Inject(forwardRef(() => UserService))
     private userService: UserService,
     private jwtService: JwtService,
-    private readonly configService: ConfigService,
   ) { }
 
   async login(userDto: UserDto) {
     const user = await this.validateUser(userDto.login, userDto.password);
-    console.log(888, user);
-
     return user
       ? await this.getTokens({ id: user.id, login: user.login })
       : null;
@@ -43,33 +46,21 @@ export class AuthService {
     return await bcrypt.hash(password, process.env.SALT);
   }
 
-  private async validateUser(
-    login: string,
-    password: string,
-  ): Promise<User | null> {
+  async validateUser(login: string, password: string): Promise<User | null> {
     const user = await this.userService.findByLogin(login);
-    console.log(10, user);
-    console.log(12, password);
 
-    const verifiedUser = await this.verifyPassword(password, user.password);
-    console.log(11, verifiedUser);
-
-    if (!user) {
-      return null;
-    }
+    if (!user && !(await isCorrectPassword(password, user.password)))
+      throw new NotCorrect();
 
     return user;
-  }
-
-  async verifyPassword(oldPassword: string, currentHash: string) {
-    return await bcrypt.compare(oldPassword, currentHash);
   }
 
   async signUp(userDto: UserDto) {
     try {
       return await this.userService.create(userDto);
-    } catch (error) {
-      throw new BadRequest();
+    } catch (err) {
+      if (err instanceof BadRequest) throw new BadRequest();
+      throw new InternalServerErrorException();
     }
   }
 
@@ -104,10 +95,9 @@ export class AuthService {
       if (user && user.id === id && isRefresh) {
         return await this.getTokens({ id: user.id, login: user.login });
       }
-
       return null;
     } catch (e) {
-      return null;
+      throw new ForbiddenException('Refresh token is invalid');
     }
   }
 }

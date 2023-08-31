@@ -6,7 +6,6 @@ import { SetMetadata } from '@nestjs/common';
 
 export const Public = () => SetMetadata('isPublic', true);
 
-
 @Injectable()
 export class MyAuthGuard extends AuthGuard('jwt') {
   constructor(private reflector: Reflector) {
