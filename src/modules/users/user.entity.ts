@@ -1,13 +1,17 @@
-import { Transform } from 'class-transformer';
+import { Exclude } from 'class-transformer';
 import {
   Column,
   Entity,
-  PrimaryColumn,
   VersionColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Exclude } from 'class-transformer';
+
+const transformData = {
+  from: (date: Date) => date.getTime(),
+  to: (date: Date) => date,
+};
 
 @Entity('users')
 export class User {
@@ -15,23 +19,26 @@ export class User {
     Object.assign(this, entity);
   }
 
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
   login: string;
 
-  @Column()
-  password: string;
-
   @VersionColumn()
   version: number;
 
-  @CreateDateColumn()
-  @Transform(({ value }) => new Date(value).getTime())
-  createdAt: Date | number;
+  @CreateDateColumn({
+    transformer: transformData,
+  })
+  createdAt: number;
 
-  @UpdateDateColumn()
-  @Transform(({ value }) => new Date(value).getTime())
-  updatedAt: Date | number;
+  @UpdateDateColumn({
+    transformer: transformData,
+  })
+  updatedAt: number;
+
+  @Exclude()
+  @Column()
+  password: string;
 }

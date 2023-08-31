@@ -13,9 +13,9 @@ export class EntityNotContent extends HttpException {
   }
 }
 
-export class PasswordNotRight extends HttpException {
+export class PasswordNotCorrect extends HttpException {
   constructor() {
-    super('Password not right', 403);
+    super('Password not correct', 403);
   }
 }
 

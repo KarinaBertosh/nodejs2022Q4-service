@@ -7,16 +7,11 @@ import {
   Delete,
   Put,
   HttpCode,
-  InternalServerErrorException,
-  NotFoundException,
-  ForbiddenException,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from './user.entity';
 import { UpdatePasswordDto, UserDto } from './dto/user.dto';
 import { UUID } from 'src/utils/uuid';
-import { BadRequest, EntityNotExist, Forbidden, NotFoundError } from 'src/errors/errors';
-import { entities } from 'src/utils/entity';
 
 @Controller('user')
 export class UserController {
@@ -24,9 +19,8 @@ export class UserController {
 
   @Post()
   @HttpCode(201)
-  async create(@Body() userDto: UserDto) {
-    if (!userDto.login || !userDto.password) throw new BadRequest();
-    return this.userService.create(userDto);
+  async create(@Body() dto: UserDto) {
+    return this.userService.create(dto);
   }
 
   @Get()
@@ -36,29 +30,17 @@ export class UserController {
 
   @Get(':id')
   async findOne(@Param() { id }: UUID): Promise<User> {
-    const user = await this.userService.findOne(id);
-    if (!user) throw new EntityNotExist(entities.user);
-    return user;
+    return await this.userService.findOne(id);
   }
 
   @Put(':id')
-  async update(
-    @Param() { id }: UUID,
-    @Body() updateUserDto: UpdatePasswordDto,
-  ) {
-    if (!updateUserDto.oldPassword || !updateUserDto.newPassword)
-      throw new BadRequest();
-
-    const user = await this.userService.update(id, updateUserDto);
-    if (!user) throw new EntityNotExist(entities.user);
-    return user;
+  async update(@Param() { id }: UUID, @Body() dto: UpdatePasswordDto) {
+    return await this.userService.update(id, dto);
   }
 
   @Delete(':id')
   @HttpCode(204)
   async remove(@Param() { id }: UUID) {
-    const user = await this.userService.delete(id);
-    if (!user) throw new EntityNotExist(entities.user);
-    return user;
+    return await this.userService.delete(id);
   }
 }

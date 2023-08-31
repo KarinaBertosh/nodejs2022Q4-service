@@ -47,7 +47,7 @@ export class AuthService {
     login: string,
     password: string,
   ): Promise<User | null> {
-    const user = await this.userService.getUserByLogin(login);
+    const user = await this.userService.findByLogin(login);
     console.log(10, user);
     console.log(12, password);
 
@@ -99,7 +99,7 @@ export class AuthService {
         { maxAge: process.env.JWT_REFRESH_EXPIRE_TIME },
       );
       const { id, login, isRefresh = false } = data;
-      const user = await this.userService.getUserByLogin(login);
+      const user = await this.userService.findByLogin(login);
 
       if (user && user.id === id && isRefresh) {
         return await this.getTokens({ id: user.id, login: user.login });
