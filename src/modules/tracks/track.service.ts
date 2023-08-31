@@ -24,23 +24,21 @@ export class TrackService {
     return track;
   }
 
-  async create(createDto: TrackDto) {
-    const track = { ...createDto, id: randomUUID() };
-    const createdTrack = await this.trackRepository.create(track);
+  async create(dto: TrackDto) {
+    // const track = { ...dto, id: randomUUID() };
+    const createdTrack = await this.trackRepository.create(dto);
     return await this.trackRepository.save(createdTrack);
   }
 
   async update(id: string, updateDto: UpdateTrackDto) {
-    const track = await this.trackRepository.findOne({ where: { id } });
+    const track = await this.findOne(id);
     if (!track) return null;
     await this.trackRepository.update({ id }, updateDto);
-
     return await this.trackRepository.findOneBy({ id });
   }
 
   async delete(id: string) {
     const track = await this.findOne(id);
-    if (!track) throw new EntityNotExist(entities.track);
-    await this.trackRepository.delete(id);
+    if (track) await this.trackRepository.delete(id);
   }
 }

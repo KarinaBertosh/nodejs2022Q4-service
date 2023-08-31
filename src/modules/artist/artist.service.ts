@@ -25,8 +25,8 @@ export class ArtistService {
   }
 
   async create(dto: ArtistDto) {
-    const artist = { ...dto, id: randomUUID() };
-    const createdArtist = await this.artistRepository.create(artist);
+    // const artist = { ...dto, id: randomUUID() };
+    const createdArtist = await this.artistRepository.create(dto);
     return await this.artistRepository.save(createdArtist);
   }
 

@@ -41,10 +41,7 @@ export class AlbumService {
     if (dto.artistId) {
       await this.checkAndMakeCorrectIdArtist(dto);
     }
-    const album = await this.albumRepository.create({
-      ...dto,
-      id: randomUUID(),
-    });
+    const album = await this.albumRepository.create(dto);
     return await this.albumRepository.save(album);
   }
 

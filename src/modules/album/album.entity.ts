@@ -4,6 +4,7 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryColumn,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Track } from '../tracks/track.entity';
 import { Artist } from '../artist/artist.entity';
@@ -14,7 +15,7 @@ export class Album {
     Object.assign(this, entity);
   }
 
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
