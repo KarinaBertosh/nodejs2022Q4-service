@@ -8,14 +8,14 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { UUID } from 'src/database/uuid.dto';
 import { AlbumService } from './album.service';
 import { AlbumDto, UpdateAlbumDto } from './dto/album.dto';
 import { entities } from 'src/utils/entity';
+import { UUID } from 'src/utils/uuid';
 
 @Controller(entities.album)
 export class AlbumController {
-  constructor(private albumService: AlbumService) {}
+  constructor(private albumService: AlbumService) { }
   @Get()
   getAll() {
     return this.albumService.findAll();
@@ -27,13 +27,14 @@ export class AlbumController {
   }
 
   @Post()
-  create(@Body() createDto: AlbumDto) {
-    return this.albumService.create(createDto);
+  @HttpCode(201)
+  create(@Body() dto: AlbumDto) {
+    return this.albumService.create(dto);
   }
 
   @Put(':id')
-  update(@Param() { id }: UUID, @Body() updateDto: UpdateAlbumDto) {
-    return this.albumService.update(id, updateDto);
+  async update(@Param() { id }: UUID, @Body() dto: UpdateAlbumDto) {
+    return await this.albumService.update(id, dto);
   }
 
   @Delete(':id')

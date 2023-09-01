@@ -10,12 +10,12 @@ import {
 } from '@nestjs/common';
 import { TrackService } from './track.service';
 import { TrackDto, UpdateTrackDto } from './dto/track.dto';
-import { UUID } from 'src/database/uuid.dto';
 import { entities } from 'src/utils/entity';
+import { UUID } from 'src/utils/uuid';
 
 @Controller(entities.track)
 export class TrackController {
-  constructor(private trackService: TrackService) {}
+  constructor(private trackService: TrackService) { }
   @Get()
   getAll() {
     return this.trackService.findAll();
@@ -27,13 +27,14 @@ export class TrackController {
   }
 
   @Post()
-  create(@Body() createTrackDto: TrackDto) {
-    return this.trackService.create(createTrackDto);
+  @HttpCode(201)
+  create(@Body() dto: TrackDto) {
+    return this.trackService.create(dto);
   }
 
   @Put(':id')
-  update(@Param() { id }: UUID, @Body() updateDto: UpdateTrackDto) {
-    return this.trackService.update(id, updateDto);
+  async update(@Param() { id }: UUID, @Body() dto: UpdateTrackDto) {
+    return await this.trackService.update(id, dto);
   }
 
   @HttpCode(204)

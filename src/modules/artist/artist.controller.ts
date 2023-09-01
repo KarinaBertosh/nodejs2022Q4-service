@@ -8,10 +8,10 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { UUID } from 'src/database/uuid.dto';
 import { ArtistService } from './artist.service';
 import { ArtistDto, UpdateArtistDto } from './dto/artist.dto';
 import { entities } from 'src/utils/entity';
+import { UUID } from 'src/utils/uuid';
 
 @Controller(entities.artist)
 export class ArtistController {
@@ -27,13 +27,14 @@ export class ArtistController {
   }
 
   @Post()
-  create(@Body() createDto: ArtistDto) {
-    return this.artistService.create(createDto);
+  @HttpCode(201)
+  create(@Body() dto: ArtistDto) {
+    return this.artistService.create(dto);
   }
 
   @Put(':id')
-  update(@Param() { id }: UUID, @Body() updateDto: UpdateArtistDto) {
-    return this.artistService.update(id, updateDto);
+  async update(@Param() { id }: UUID, @Body() dto: UpdateArtistDto) {
+    return await this.artistService.update(id, dto);
   }
 
   @Delete(':id')

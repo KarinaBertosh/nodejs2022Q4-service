@@ -1,38 +1,41 @@
 import { Injectable } from '@nestjs/common';
-import { DB } from 'src/database/db.service';
 import { ArtistDto, UpdateArtistDto } from './dto/artist.dto';
 import { EntityNotExist } from 'src/errors/errors';
 import { entities } from 'src/utils/entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Artist } from './artist.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class ArtistService {
-  constructor(private db: DB) {}
+  constructor(
+    @InjectRepository(Artist)
+    private readonly artistRepository: Repository<Artist>,
+  ) { }
 
-  findAll() {
-    return this.db.artist.findAll();
+  async findAll() {
+    return await this.artistRepository.find();
   }
 
-  findOne(id: string) {
-    const artist = this.db.artist.findOne(id);
+  async findOne(id: string) {
+    const artist = await this.artistRepository.findOne({ where: { id } });
     if (!artist) throw new EntityNotExist(entities.artist);
     return artist;
   }
 
-  create(dto: ArtistDto) {
-    const artist = this.db.artist.create(dto);
-    return artist;
+  async create(dto: ArtistDto) {
+    const createdArtist = await this.artistRepository.create(dto);
+    return await this.artistRepository.save(createdArtist);
   }
 
-  update(id: string, dto: UpdateArtistDto) {
-    const artist = this.findOne(id);
-    if (!artist) throw new EntityNotExist(entities.artist);
-    artist.grammy = dto.grammy;
-    return this.db.artist.update(artist);
+  async update(id: string, dto: UpdateArtistDto) {
+    await this.findOne(id);
+    await this.artistRepository.update({ id }, dto);
+    return await this.findOne(id);
   }
 
-  delete(id: string) {
-    const artist = this.findOne(id);
-    if (!artist) throw new EntityNotExist(entities.artist);
-    return this.db.artist.delete(artist);
+  async delete(id: string) {
+    await this.findOne(id);
+    await this.artistRepository.delete(id);
   }
 }
